@@ -1,3 +1,4 @@
+import 'package:app/screens/signInScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../model/SimpleUser.dart';
@@ -99,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     const Text('Don\'t have an account?'),
-                    TextButton(onPressed: () {}, child: const Text('Sign In'))
+                    TextButton(onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
+                    }, child: const Text('Sign In'))
                   ],
                 )
               ],
