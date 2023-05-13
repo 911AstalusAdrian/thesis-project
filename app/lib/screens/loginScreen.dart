@@ -26,10 +26,13 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Icon(
-                  Icons.person_outlined,
-                  size: 150.0,
-                  color: Colors.orange,
+                const Padding(
+                  padding: EdgeInsets.only(top: 55.0),
+                  child: Icon(
+                    Icons.airplane_ticket_outlined,
+                    size: 150.0,
+                    color: Colors.orange,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
