@@ -1,4 +1,7 @@
+import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:flutter/material.dart';
+
+import 'homeScreen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -134,7 +137,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen()));
+                          },
                           style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 30.0),

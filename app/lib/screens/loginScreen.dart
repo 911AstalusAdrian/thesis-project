@@ -1,8 +1,9 @@
+import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:app/screens/signInScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../model/SimpleUser.dart';
-import 'mainScreen.dart';
+import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainScreen()));
+                              builder: (context) => MainNavigationScreen()));
                     }
                   },
                   style: ElevatedButton.styleFrom(
