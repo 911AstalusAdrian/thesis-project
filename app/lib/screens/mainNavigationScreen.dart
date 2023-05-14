@@ -3,8 +3,13 @@ import 'package:app/screens/homeScreen.dart';
 import 'package:app/screens/profileScreen.dart';
 import 'package:flutter/material.dart';
 
+import '../assets/Colors.dart';
+import '../model/User.dart';
+
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key}) : super(key: key);
+  const MainNavigationScreen({Key? key, required this.user}) : super(key: key);
+
+  final User user;
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -13,12 +18,13 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   int _index = 0;
-
-  final tabs = [
-    HomeScreen(),
-    CreateTripScreen(),
-    ProfileScreen()
-  ];
+  // final User finalUser = widget.user!;
+  //
+  // final tabs = [
+  //   HomeScreen(),
+  //   CreateTripScreen(),
+  //   ProfileScreen(user: widget.user!)
+  // ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -29,13 +35,31 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: tabs[_index],
+
+      body: navigateToScreen(),
       bottomNavigationBar: createNavigation(),
     );
   }
 
+  Widget navigateToScreen(){
+    switch (_index){
+      case 0:
+        return HomeScreen();
+        break;
+      case 1:
+        return CreateTripScreen();
+        break;
+      case 2:
+        return ProfileScreen(user: widget.user);
+        break;
+      default:
+        return const Text("Hello");
+    }
+  }
+
   createNavigation(){
     return BottomNavigationBar(
+      backgroundColor: myWhite,
       items: const  <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline_sharp), label: 'Create a Trip'),

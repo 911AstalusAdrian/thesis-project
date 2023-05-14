@@ -1,6 +1,7 @@
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:flutter/material.dart';
 
+import '../model/User.dart';
 import 'homeScreen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -53,7 +54,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
-                        validator: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty){
+                            return 'Please enter your first name!';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'First Name',
@@ -64,7 +70,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
-                        validator: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty){
+                            return 'Please enter your Last Name!';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Last Name',
@@ -75,7 +86,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
-                        validator: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your E-mail!';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'E-mail',
@@ -86,7 +102,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
-                        validator: (value) {},
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please choose a Username';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Username',
@@ -98,6 +119,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
                         validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a Password!';
+                          }
                           return null;
                         },
                         obscureText: _hiddenPass,
@@ -118,7 +142,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                         child: TextFormField(
-                          validator: (value) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your Password!';
+                            }
+                            if (value != passwordController.text) {
+                              return 'Passwords do not match!';
+                            }
+                            return null;
+                          },
                           obscureText: _hiddenConfirmPass,
                           decoration: InputDecoration(
                             suffixIcon: IconButton(
@@ -137,8 +169,17 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen()));
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              User user = User(
+                                fName: fNameController.value.text,
+                                lName: lNameController.value.text,
+                                userName: usernameController.value.text,
+                                eMail: emailController.value.text,
+                                password: passwordController.value.text
+                              );
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(user: user)));
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(

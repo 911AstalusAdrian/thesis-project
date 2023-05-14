@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/navbar.dart';
-
 class CreateTripScreen extends StatefulWidget {
   const CreateTripScreen({Key? key}) : super(key: key);
 

@@ -3,6 +3,7 @@ import 'package:app/screens/signInScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../model/SimpleUser.dart';
+import '../model/User.dart';
 import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -81,11 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       final email = emailController.value.text;
                       final password = passwordController.value.text;
                       //TODO here we should get the username which has the matching email and password and to pass on
-                      // final SimpleUser user = SimpleUser(email: email, password: password);
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainNavigationScreen()));
+                              builder: (context) => MainNavigationScreen(user: User(fName: 'John', lName: 'Doe', userName: 'username', eMail: 'email', password: 'pass'))));
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: <Widget>[
                     const Text('Don\'t have an account?'),
                     TextButton(onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
                     }, child: const Text('Sign In'))
                   ],
                 )
