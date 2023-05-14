@@ -9,6 +9,8 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool _hiddenPass = true;
+  bool _hiddenConfirmPass = true;
   TextEditingController fNameController = TextEditingController();
   TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -92,9 +94,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                       child: TextFormField(
-                        validator: (value) {},
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        validator: (value) {
+                          return null;
+                        },
+                        obscureText: _hiddenPass,
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _hiddenPass = !_hiddenPass;
+                                });
+                              },
+                              icon: Icon(_hiddenPass ? Icons.visibility : Icons.visibility_off)),
+                          border: const OutlineInputBorder(),
                           labelText: 'Choose a Password',
                         ),
                         controller: passwordController,
@@ -104,8 +116,16 @@ class _SignInScreenState extends State<SignInScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                         child: TextFormField(
                           validator: (value) {},
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+                          obscureText: _hiddenConfirmPass,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _hiddenConfirmPass = !_hiddenConfirmPass;
+                                  });
+                                },
+                                icon: Icon(_hiddenConfirmPass ? Icons.visibility : Icons.visibility_off)),
+                            border: const OutlineInputBorder(),
                             labelText: 'Confirm Password',
                           ),
                           controller: confirmPassController,
