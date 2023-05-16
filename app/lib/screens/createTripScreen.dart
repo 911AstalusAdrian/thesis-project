@@ -21,11 +21,11 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             child: Center(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: myBlue),
-                  borderRadius: BorderRadius.all(Radius.circular(15.0))
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  color: const Color(0xFFDADADA)
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
                       const FancyText(text: "How many people are going?"),
