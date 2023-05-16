@@ -9,18 +9,24 @@ class SelectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: myGrey
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+        child: Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+              side: BorderSide(
+                  color: myGrey
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(15.0))
           ),
-          borderRadius: const BorderRadius.all(Radius.circular(15.0))
-        ),
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: Center(child: Text(value, style: TextStyle(fontSize: 30),),),
+          child: SizedBox(
+            width: 70,
+            height: 70,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Center(child: Text(value, style: TextStyle(fontSize: value.length < 3 ? 30 : 15),),),
+            )
+          ),
         ),
       ),
     );

@@ -30,7 +30,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                     children: [
                       const FancyText(text: "How many people are going?"),
                       SizedBox(
-                        height: 150.0,
+                        height: 100.0,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
@@ -39,6 +39,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             SelectionCard(value: '2'),
                             SelectionCard(value: '3'),
                             SelectionCard(value: '4+'),
+                            SelectionCard(value: 'Don\'t know yet')
                           ],
                         ),
                       ),
