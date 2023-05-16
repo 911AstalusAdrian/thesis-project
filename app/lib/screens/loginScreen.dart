@@ -1,6 +1,7 @@
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:app/screens/signInScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../model/SimpleUser.dart';
 import '../model/User.dart';
@@ -15,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _secureStorage = FlutterSecureStorage();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -82,10 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       final email = emailController.value.text;
                       final password = passwordController.value.text;
                       //TODO here we should get the username which has the matching email and password and to pass on
+                      User testUser = const User(fName: 'John', lName: 'Doe', userName: 'username', eMail: 'email', password: 'pass');
+                      _secureStorage.write(key: 'connected_user', value: User.serialize(testUser));
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainNavigationScreen(user: User(fName: 'John', lName: 'Doe', userName: 'username', eMail: 'email', password: 'pass'))));
+                              builder: (context) => MainNavigationScreen()));
                     }
                   },
                   style: ElevatedButton.styleFrom(

@@ -1,5 +1,6 @@
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../model/User.dart';
 import 'homeScreen.dart';
@@ -15,6 +16,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _hiddenPass = true;
   bool _hiddenConfirmPass = true;
+  final _secureStorage = FlutterSecureStorage();
   TextEditingController fNameController = TextEditingController();
   TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -178,7 +180,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 eMail: emailController.value.text,
                                 password: passwordController.value.text
                               );
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(user: user)));
+                              _secureStorage.write(key: 'connected_user', value: User.serialize(user));
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen()));
                             }
                           },
                           style: ElevatedButton.styleFrom(

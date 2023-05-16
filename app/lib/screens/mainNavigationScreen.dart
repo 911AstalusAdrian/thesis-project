@@ -7,9 +7,8 @@ import '../assets/Colors.dart';
 import '../model/User.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key, required this.user}) : super(key: key);
+  const MainNavigationScreen({Key? key}) : super(key: key);
 
-  final User user;
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -18,13 +17,6 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   int _index = 0;
-  // final User finalUser = widget.user!;
-  //
-  // final tabs = [
-  //   HomeScreen(),
-  //   CreateTripScreen(),
-  //   ProfileScreen(user: widget.user!)
-  // ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -50,7 +42,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         return CreateTripScreen();
         break;
       case 2:
-        return ProfileScreen(user: widget.user);
+        return ProfileScreen();
         break;
       default:
         return const Text("Hello");
