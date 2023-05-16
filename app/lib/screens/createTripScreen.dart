@@ -1,3 +1,5 @@
+import 'package:app/screens/mainNavigationScreen.dart';
+import 'package:app/screens/profileScreen.dart';
 import 'package:app/widgets/fancyText.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -155,7 +157,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         ),
                   ])),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      showAlertDialog(context);
+                    },
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -171,5 +175,25 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
         ),
       ),
     ));
+  }
+
+  showAlertDialog(BuildContext context){
+    AlertDialog alert = AlertDialog(
+      title: const Text("Trip Created!"),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 2)));},
+            child: const Text("OK")),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

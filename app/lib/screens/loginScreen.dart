@@ -86,10 +86,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       //TODO here we should get the username which has the matching email and password and to pass on
                       User testUser = const User(fName: 'John', lName: 'Doe', userName: 'username', eMail: 'email', password: 'pass');
                       _secureStorage.write(key: 'connected_user', value: User.serialize(testUser));
-                      await Navigator.push(
+                      await Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainNavigationScreen()));
+                              builder: (context) => MainNavigationScreen(index: 0)));
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: <Widget>[
                     const Text('Don\'t have an account?'),
                     TextButton(onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
                     }, child: const Text('Sign In'))
                   ],
                 )

@@ -181,7 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 password: passwordController.value.text
                               );
                               _secureStorage.write(key: 'connected_user', value: User.serialize(user));
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => MainNavigationScreen()));
+                              await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
                             }
                           },
                           style: ElevatedButton.styleFrom(

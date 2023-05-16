@@ -7,8 +7,9 @@ import '../assets/Colors.dart';
 import '../model/User.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key}) : super(key: key);
+  MainNavigationScreen({Key? key, required this.index}) : super(key: key);
 
+  int index = 0;
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -17,6 +18,11 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   int _index = 0;
+
+  @override
+  void initState(){
+    _index = widget.index;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,13 +42,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget navigateToScreen(){
     switch (_index){
       case 0:
-        return HomeScreen();
+        return const HomeScreen();
         break;
       case 1:
-        return CreateTripScreen();
+        return const CreateTripScreen();
         break;
       case 2:
-        return ProfileScreen();
+        return const ProfileScreen();
         break;
       default:
         return const Text("Hello");
