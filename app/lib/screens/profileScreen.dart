@@ -16,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   final _secureStorage = FlutterSecureStorage();
-  User? user;
+  User user = User();
 
   Future<User> getUserFuture() async{
     return User.deserialize(await _secureStorage.read(key: 'connected_user'));
@@ -50,11 +50,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
         child: Column(
           children: [
-            Text(user!.fName!),
-            Text(user!.lName!),
-            Text(user!.userName!),
-            Text(user!.eMail!),
-            Text(user!.password!),
+            Text(user.fName!),
+            Text(user.lName!),
+            Text(user.userName!),
+            Text(user.eMail!),
+            Text(user.password!),
           ],
         ),
       ),

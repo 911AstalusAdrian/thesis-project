@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: <Widget>[
                     const Text('Don\'t have an account?'),
                     TextButton(onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
                     }, child: const Text('Sign In'))
                   ],
                 )

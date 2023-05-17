@@ -70,7 +70,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         const FancyText(text: "Where do you plan on going?"),
                         DropdownSearch<String>(
                           showClearButton: true,
-                          items: [
+                          items: const  [
                             "United States",
                             "Italy",
                             "Japan",
@@ -114,7 +114,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             });
                           },
                         ),
-                        TextField(
+                        TextFormField(
                           controller: _endDateController,
                           decoration: const InputDecoration(
                               icon: Icon(Icons.calendar_today),
@@ -132,6 +132,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                                   "${_endDate.day}/${_endDate.month}/${_endDate.year}";
                             });
                           },
+                          validator: (value) {
+                            print(value)
+                          },
                         ),
                       ],
                     ),
@@ -148,7 +151,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             children: const [
-                              SelectionCard(value: 'Car', icon: Icon(Icons.car_rental_outlined)),
+                              SelectionCard(value: 'Car', icon: Icon(Icons.car_rental_sharp)),
                               SelectionCard(value: 'Plane', icon: Icon(Icons.airplanemode_on_outlined)),
                               SelectionCard(value: 'Train', icon: Icon(Icons.train_outlined)),
                               SelectionCard(value: 'Other', icon: Icon(Icons.emoji_transportation_outlined)),
