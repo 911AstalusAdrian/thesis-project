@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "303306453459",
+    "project_id": "thesis-project-firebase-24b03",
+    "storage_bucket": "thesis-project-firebase-24b03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303306453459:android:d1a7a99d9af5165ac03f26",
+        "android_client_info": {
+          "package_name": "travel.app.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303306453459-guloo6fbt7lv1h4utm22c11aqg1hh2av.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7-NV_pbsJWbci_kmtX6LMviHv0SuAuUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303306453459-guloo6fbt7lv1h4utm22c11aqg1hh2av.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

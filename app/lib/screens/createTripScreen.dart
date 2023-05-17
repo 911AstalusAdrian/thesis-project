@@ -133,7 +133,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             });
                           },
                           validator: (value) {
-                            print(value)
+                            print(value);
                           },
                         ),
                       ],
