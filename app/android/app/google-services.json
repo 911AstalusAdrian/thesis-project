@@ -29,6 +29,13 @@
             {
               "client_id": "303306453459-guloo6fbt7lv1h4utm22c11aqg1hh2av.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "303306453459-ds94sg04qq1p8i6hgofo34gr5sslbbbc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "travel.app.app"
+              }
             }
           ]
         }

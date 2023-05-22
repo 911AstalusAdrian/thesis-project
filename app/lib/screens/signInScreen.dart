@@ -1,4 +1,6 @@
 import 'package:app/screens/mainNavigationScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -13,7 +15,10 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+
+
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _hiddenPass = true;
   bool _hiddenConfirmPass = true;
   final _secureStorage = FlutterSecureStorage();
@@ -26,6 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -173,14 +179,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              User user = User(
-                                fName: fNameController.value.text,
-                                lName: lNameController.value.text,
-                                userName: usernameController.value.text,
-                                eMail: emailController.value.text,
-                                password: passwordController.value.text
-                              );
-                              _secureStorage.write(key: 'connected_user', value: User.serialize(user));
+                              _register();
                               await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
                             }
                           },
@@ -201,5 +200,14 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       )
     );
+  }
+
+
+  void _register() async{
+
+    final UserCredential user = ( await
+        _auth.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text)
+    );
+    print(user.hashCode);
   }
 }
