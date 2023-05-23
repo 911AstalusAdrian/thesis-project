@@ -41,6 +41,10 @@ dependencies:
   calendar_date_picker2: ^0.5.2
   firebase_core: ^2.13.0
   firebase_auth: ^4.6.1
+  firebase_database: ^10.2.1
+  cloud_firestore: ^4.7.1
+  get: ^4.6.5
+
 
 dev_dependencies:
   flutter_test:

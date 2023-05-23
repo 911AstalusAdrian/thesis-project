@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../model/User.dart';
+import '../model/user_model.dart';
+import '../server/server.dart';
 import 'homeScreen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -15,11 +16,15 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+
+  Server server = Server();
+
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   bool _hiddenPass = true;
   bool _hiddenConfirmPass = true;
-  final _secureStorage = FlutterSecureStorage();
+
   TextEditingController fNameController = TextEditingController();
   TextEditingController lNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -188,7 +193,16 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            _register();
+
+                            final detailedUser = UserModel(fName: fNameController.text, lName: lNameController.text, userName: usernameController.text, eMail: emailController.text);
+
+                            String uid = await _register();
+
+                            server.addUser(uid, detailedUser);
+
+                            if (!mounted) return; // getting rid of the warning for below call
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
+
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -210,16 +224,16 @@ class _SignInScreenState extends State<SignInScreen> {
     ));
   }
 
-  void _register() async {
+  Future<String> _register() async {
     try {
       final UserCredential user = (await _auth.createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text));
-      if (!mounted) return; // getting rid of the warning for below call
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
+      return user.user!.uid;
     } on FirebaseAuthException catch (e) {
       // TODO Handle exception
       print('!!!!!!!!Failed with error code: ${e.code}');
       print(e.message);
+      return "";
     }
   }
 }

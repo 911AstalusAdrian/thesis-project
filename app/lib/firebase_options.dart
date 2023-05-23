@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:303306453459:android:d1a7a99d9af5165ac03f26',
     messagingSenderId: '303306453459',
     projectId: 'thesis-project-firebase-24b03',
+    databaseURL: 'https://thesis-project-firebase-24b03-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'thesis-project-firebase-24b03.appspot.com',
   );
 
@@ -62,6 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:303306453459:ios:a8361c8a82f06884c03f26',
     messagingSenderId: '303306453459',
     projectId: 'thesis-project-firebase-24b03',
+    databaseURL: 'https://thesis-project-firebase-24b03-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'thesis-project-firebase-24b03.appspot.com',
     iosClientId: '303306453459-ds94sg04qq1p8i6hgofo34gr5sslbbbc.apps.googleusercontent.com',
     iosBundleId: 'travel.app.app',

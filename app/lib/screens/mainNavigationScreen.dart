@@ -4,7 +4,7 @@ import 'package:app/screens/profileScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../assets/Colors.dart';
-import '../model/User.dart';
+import '../model/user_model.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   MainNavigationScreen({Key? key, required this.index}) : super(key: key);
