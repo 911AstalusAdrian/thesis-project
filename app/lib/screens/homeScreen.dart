@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class HomeScreen extends StatefulWidget {
@@ -9,15 +10,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  final _secureStorage = const FlutterSecureStorage();
+  final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  String? uid;
 
 
   @override
   void initState(){
     super.initState();
-    getUser();
   }
 
   @override
@@ -25,14 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
     return Scaffold(
-      body: Text(uid ?? "ERROR"),
+      body: Text(uid),
       );
   }
-
-  getUser() async {
-   uid = await _secureStorage.read(key: "uid");
-   setState(() {});
-  }
-
-
 }

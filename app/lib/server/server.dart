@@ -1,7 +1,5 @@
 import 'package:app/model/user_model.dart';
 import 'package:app/repository/user_repository.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Server{
@@ -12,7 +10,7 @@ class Server{
     await _userRepo.createUser(uid, user);
   }
 
-  getUserFromUid(String uid) {
+  getUserFromUid(String uid) async {
     _userRepo.getUser(uid);
   }
 

@@ -25,13 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState(){
     super.initState();
-    // getUser();
   }
-
-  // getUser() async {
-  //   uid = await _secureStorage.read(key: "uid");
-  //   setState(() {});
-  // }
 
 
   @override
@@ -43,10 +37,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Center(
       child: FutureBuilder(
           future: server.getUserFromUid(uid),
-          builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) { return const Center(child: Text("Waiting")); }
-            if (snapshot.hasError) { return Center(child: Text( '${snapshot.error} occurred'));}
-            if (snapshot.hasData) {
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              print("Waiting");
+              print(snapshot.data);
+              return const Center(child: Text("Waiting")); }
+            else if (snapshot.hasError) {
+              print(snapshot.data);
+              print("Error");
+              return Center(child: Text( '${snapshot.error} occurred'));}
+            else if (snapshot.hasData) {
+              print(snapshot.data);
               final data = snapshot.data;
               print(data);
               return const Center(
@@ -56,8 +57,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               );
             }
-            return const Center(child: CircularProgressIndicator());
+            else {
+              return const Center(child: CircularProgressIndicator()); }
           })
     );
   }
+
 }

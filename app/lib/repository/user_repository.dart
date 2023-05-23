@@ -1,6 +1,5 @@
 import 'package:app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserRepository extends GetxController {
@@ -19,6 +18,6 @@ class UserRepository extends GetxController {
   }
 
   getUser(String uid) async {
-     return _db.collection("Users").doc(uid).get();
+    return _db.collection("Users");
   }
 }
