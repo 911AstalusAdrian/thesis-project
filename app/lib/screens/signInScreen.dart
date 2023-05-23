@@ -1,12 +1,10 @@
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../model/user_model.dart';
 import '../server/server.dart';
-import 'homeScreen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -20,6 +18,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Server server = Server();
 
   final _formKey = GlobalKey<FormState>();
+  final _secureStorage = const FlutterSecureStorage();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool _hiddenPass = true;
@@ -191,20 +190,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 5.0, horizontal: 0.0),
                     child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-
-                            final detailedUser = UserModel(fName: fNameController.text, lName: lNameController.text, userName: usernameController.text, eMail: emailController.text);
-
-                            String uid = await _register();
-
-                            server.addUser(uid, detailedUser);
-
-                            if (!mounted) return; // getting rid of the warning for below call
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
-
-                          }
-                        },
+                        onPressed: () async { if (_formKey.currentState!.validate()) { registerUser(); }},
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 30.0),
@@ -223,6 +209,24 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     ));
   }
+
+  Future registerUser() async {
+    final userToRegister = UserModel(
+        fName: fNameController.text,
+        lName: lNameController.text,
+        userName: usernameController.text,
+        eMail: emailController.text);
+
+    String uid = await _register();
+
+    server.addUser(uid, userToRegister);
+
+    _secureStorage.write(key: "uid", value: uid);
+    if (!mounted) return; // getting rid of the warning for below call
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
+
+  }
+
 
   Future<String> _register() async {
     try {

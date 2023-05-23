@@ -13,8 +13,12 @@ class UserRepository extends GetxController {
     await _db.collection("Users")
         .doc(uid)
         .set(user.toJson())
-        .then((_) => print("Added"))
-        .catchError((error) => print("Error"));
+        .then((_) => {print("Accepted")})
+        .catchError((error) => {print("Error")});
 
+  }
+
+  getUser(String uid) async {
+     return _db.collection("Users").doc(uid).get();
   }
 }

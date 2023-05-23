@@ -1,11 +1,8 @@
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:app/screens/signInScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../model/SimpleUser.dart';
-import '../model/user_model.dart';
-import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,8 +12,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final _formKey = GlobalKey<FormState>();
-  final _secureStorage = FlutterSecureStorage();
+  final _secureStorage = const FlutterSecureStorage();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -43,6 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 20.0),
                   child: TextFormField(
+                    enableSuggestions: false,
+                    autocorrect: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an e-mail!';
@@ -59,6 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: TextFormField(
+                    enableSuggestions: false,
+                    autocorrect: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a password!';
@@ -79,19 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: const Text('Forgot my password')),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      final email = emailController.value.text;
-                      final password = passwordController.value.text;
-                      //TODO here we should get the username which has the matching email and password and to pass on
-                      UserModel testUser = const UserModel(fName: 'John', lName: 'Doe', userName: 'username', eMail: 'email');
-                      _secureStorage.write(key: 'connected_user', value: UserModel.serialize(testUser));
-                      await Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MainNavigationScreen(index: 0)));
-                    }
-                  },
+                  onPressed: () async { if (_formKey.currentState!.validate()) { _login(); }},
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 30.0),
@@ -117,4 +109,26 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+   _login() async {
+
+     final email = emailController.text.trim();
+     final password = passwordController.text.trim();
+
+     try {
+
+       final credential = await _auth.signInWithEmailAndPassword(
+           email: email,
+           password: password);
+
+       _secureStorage.write(key: "uid", value: credential.user!.uid);
+       if (!mounted) return;
+       await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 0)));
+
+     } on FirebaseAuthException catch (e) {
+       if (e.code == 'user-not-found') { print('No user found for that email.'); }
+       else if (e.code == 'wrong-password') { print('Wrong password provided for that user.'); }
+     }
+  }
+
 }

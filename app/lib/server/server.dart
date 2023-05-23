@@ -12,4 +12,8 @@ class Server{
     await _userRepo.createUser(uid, user);
   }
 
+  getUserFromUid(String uid) {
+    _userRepo.getUser(uid);
+  }
+
 }
