@@ -34,31 +34,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // TODO  in Scaffold, tried the following: body : ProfileCard(user: widget.user)
     // TODO can do without a widget but it would be a nice thing
 
+    CollectionReference _users = FirebaseFirestore.instance.collection("Users");
+
+
     return Center(
-      child: FutureBuilder(
-          future: server.getUserFromUid(uid),
-          builder: (ctx, snapshot) {
+      child: FutureBuilder<DocumentSnapshot>(
+          future: _users.doc(uid).get(), // the only way this thing works
+          builder: (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print("Waiting");
-              print(snapshot.data);
-              return const Center(child: Text("Waiting")); }
+              return const Center(child: CircularProgressIndicator()); }
             else if (snapshot.hasError) {
-              print(snapshot.data);
-              print("Error");
               return Center(child: Text( '${snapshot.error} occurred'));}
             else if (snapshot.hasData) {
-              print(snapshot.data);
-              final data = snapshot.data;
-              print(data);
-              return const Center(
+              final String data = snapshot.data!.get("eMail");
+              return Center(
                 child: Text(
-                  "Text",
+                  data,
                   style: TextStyle(fontSize: 18),
                 ),
               );
             }
-            else {
-              return const Center(child: CircularProgressIndicator()); }
+            else { return const Center(child: CircularProgressIndicator()); }
           })
     );
   }
