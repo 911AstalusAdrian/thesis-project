@@ -19,8 +19,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   Server server = Server();
-  final _secureStorage = const FlutterSecureStorage();
   final String uid = FirebaseAuth.instance.currentUser!.uid;
+  CollectionReference users = FirebaseFirestore.instance.collection("Users");
 
   @override
   void initState(){
@@ -34,12 +34,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // TODO  in Scaffold, tried the following: body : ProfileCard(user: widget.user)
     // TODO can do without a widget but it would be a nice thing
 
-    CollectionReference _users = FirebaseFirestore.instance.collection("Users");
-
 
     return Center(
       child: FutureBuilder<DocumentSnapshot>(
-          future: _users.doc(uid).get(), // the only way this thing works
+          future: users.doc(uid).get(), // the only way this thing works
           builder: (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator()); }
