@@ -22,6 +22,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   DateTime _endDate = DateTime.now();
   TextEditingController _endDateController = TextEditingController();
 
+  int _selectedPeopleIndex = -1;
+  int _selectedTransportIndex = -1;
+
   String _selectedCountry = "";
 
   @override
@@ -50,12 +53,32 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
-                            children: const [
-                              SelectionCard(value: '1', icon: Icon(Icons.person_outline)),
-                              SelectionCard(value: '2', icon: Icon(Icons.people_outline)),
-                              SelectionCard(value: '3', icon: Icon(Icons.groups_outlined)),
-                              SelectionCard(value: '4+', icon: Icon(Icons.group_add_outlined)),
-                              SelectionCard(value: 'Don\'t know yet', icon: Icon(Icons.question_mark_outlined))
+                            children: [
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 0,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 0; });},
+                                  value: '1',
+                                  icon: const Icon(Icons.person_outline)),
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 1,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 1; });},
+                                  value: '2',
+                                  icon: const Icon(Icons.people_outline)),
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 2,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 2; });},
+                                  value: '3',
+                                  icon: const Icon(Icons.groups_outlined)),
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 3,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 3; });},
+                                  value: '4+',
+                                  icon: const Icon(Icons.group_add_outlined)),
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 4,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 4; });},
+                                  value: 'Don\'t know yet',
+                                  icon: const Icon(Icons.question_mark_outlined))
                             ],
                           ),
                         ),
@@ -150,11 +173,27 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
-                            children: const [
-                              SelectionCard(value: 'Car', icon: Icon(Icons.car_rental_sharp)),
-                              SelectionCard(value: 'Plane', icon: Icon(Icons.airplanemode_on_outlined)),
-                              SelectionCard(value: 'Train', icon: Icon(Icons.train_outlined)),
-                              SelectionCard(value: 'Other', icon: Icon(Icons.emoji_transportation_outlined)),
+                            children: [
+                              SelectionCard(
+                                  isSelected: _selectedTransportIndex == 0,
+                                  onTap: () { setState(() { _selectedTransportIndex = 0; });},
+                                  value: 'Car',
+                                  icon: const Icon(Icons.car_rental_sharp)),
+                              SelectionCard(
+                                  isSelected: _selectedTransportIndex == 1,
+                                  onTap: () { setState(() { _selectedTransportIndex = 1; });},
+                                  value: 'Plane',
+                                  icon: const Icon(Icons.airplanemode_on_outlined)),
+                              SelectionCard(
+                                  isSelected: _selectedTransportIndex == 2,
+                                  onTap: () { setState(() { _selectedTransportIndex = 2; });},
+                                  value: 'Train',
+                                  icon: const Icon(Icons.train_outlined)),
+                              SelectionCard(
+                                  isSelected: _selectedTransportIndex == 3,
+                                  onTap: () { setState(() { _selectedTransportIndex = 3; });},
+                                  value: 'Other',
+                                  icon: const Icon(Icons.emoji_transportation_outlined)),
                             ],
                           ),
                         ),
