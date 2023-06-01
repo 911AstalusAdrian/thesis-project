@@ -12,8 +12,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Server server = Server();
-  final String uid = FirebaseAuth.instance.currentUser!.uid;
+  final String uid = Server.getUID();
   CollectionReference users = FirebaseFirestore.instance.collection("Users");
 
   @override

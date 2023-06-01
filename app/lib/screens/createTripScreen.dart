@@ -1,11 +1,10 @@
 import 'package:app/screens/mainNavigationScreen.dart';
-import 'package:app/screens/profileScreen.dart';
 import 'package:app/widgets/fancyText.dart';
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
-import '../assets/Colors.dart';
+import '../model/trip_model.dart';
+import '../server/server.dart';
 import '../widgets/selectionCard.dart';
 
 class CreateTripScreen extends StatefulWidget {
@@ -16,6 +15,9 @@ class CreateTripScreen extends StatefulWidget {
 }
 
 class _CreateTripScreenState extends State<CreateTripScreen> {
+
+  Server server = Server();
+
   DateTime _startDate = DateTime.now();
   TextEditingController _startDateController = TextEditingController();
 
@@ -25,6 +27,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   int _selectedPeopleIndex = -1;
   int _selectedTransportIndex = -1;
 
+  String _selectedTransport = "";
   String _selectedCountry = "";
 
   @override
@@ -55,28 +58,28 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             shrinkWrap: true,
                             children: [
                               SelectionCard(
-                                  isSelected: _selectedPeopleIndex == 0,
-                                  onTap: () { setState(() { _selectedPeopleIndex = 0; });},
+                                  isSelected: _selectedPeopleIndex == 1,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 1; });},
                                   value: '1',
                                   icon: const Icon(Icons.person_outline)),
                               SelectionCard(
-                                  isSelected: _selectedPeopleIndex == 1,
-                                  onTap: () { setState(() { _selectedPeopleIndex = 1; });},
+                                  isSelected: _selectedPeopleIndex == 2,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 2; });},
                                   value: '2',
                                   icon: const Icon(Icons.people_outline)),
                               SelectionCard(
-                                  isSelected: _selectedPeopleIndex == 2,
-                                  onTap: () { setState(() { _selectedPeopleIndex = 2; });},
+                                  isSelected: _selectedPeopleIndex == 3,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 3; });},
                                   value: '3',
                                   icon: const Icon(Icons.groups_outlined)),
                               SelectionCard(
-                                  isSelected: _selectedPeopleIndex == 3,
-                                  onTap: () { setState(() { _selectedPeopleIndex = 3; });},
-                                  value: '4+',
-                                  icon: const Icon(Icons.group_add_outlined)),
-                              SelectionCard(
                                   isSelected: _selectedPeopleIndex == 4,
                                   onTap: () { setState(() { _selectedPeopleIndex = 4; });},
+                                  value: '4',
+                                  icon: const Icon(Icons.group_add_outlined)),
+                              SelectionCard(
+                                  isSelected: _selectedPeopleIndex == 5,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 5; });},
                                   value: 'Don\'t know yet',
                                   icon: const Icon(Icons.question_mark_outlined))
                             ],
@@ -118,7 +121,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                     child: Column(
                       children: [
                         const FancyText(text: "Choose the dates:"),
-                        TextField(
+                        TextFormField(
                           controller: _startDateController,
                           decoration: const InputDecoration(
                               icon: Icon(Icons.calendar_today),
@@ -176,22 +179,22 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             children: [
                               SelectionCard(
                                   isSelected: _selectedTransportIndex == 0,
-                                  onTap: () { setState(() { _selectedTransportIndex = 0; });},
+                                  onTap: () { setState(() { _selectedTransportIndex = 0;  _selectedTransport = "car";});},
                                   value: 'Car',
                                   icon: const Icon(Icons.car_rental_sharp)),
                               SelectionCard(
                                   isSelected: _selectedTransportIndex == 1,
-                                  onTap: () { setState(() { _selectedTransportIndex = 1; });},
+                                  onTap: () { setState(() { _selectedTransportIndex = 1; _selectedTransport = "plane";});},
                                   value: 'Plane',
                                   icon: const Icon(Icons.airplanemode_on_outlined)),
                               SelectionCard(
                                   isSelected: _selectedTransportIndex == 2,
-                                  onTap: () { setState(() { _selectedTransportIndex = 2; });},
+                                  onTap: () { setState(() { _selectedTransportIndex = 2; _selectedTransport = "train";});},
                                   value: 'Train',
                                   icon: const Icon(Icons.train_outlined)),
                               SelectionCard(
                                   isSelected: _selectedTransportIndex == 3,
-                                  onTap: () { setState(() { _selectedTransportIndex = 3; });},
+                                  onTap: () { setState(() { _selectedTransportIndex = 3; _selectedTransport = "other";});},
                                   value: 'Other',
                                   icon: const Icon(Icons.emoji_transportation_outlined)),
                             ],
@@ -199,9 +202,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         ),
                   ])),
                   ElevatedButton(
-                    onPressed: () async {
-                      showAlertDialog(context);
-                    },
+                    onPressed: () async { createTrip(); },
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -217,6 +218,20 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
         ),
       ),
     ));
+  }
+
+  Future createTrip() async {
+    
+    final tripToSave = TripModel(
+      people: _selectedPeopleIndex,
+      location: _selectedCountry,
+      startDate: _startDate,
+      endDate: _endDate,
+      transportation: _selectedTransport
+    );
+
+    server.addTrip(tripToSave);
+    showAlertDialog(context);
   }
 
   showAlertDialog(BuildContext context){
