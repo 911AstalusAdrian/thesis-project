@@ -221,7 +221,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   }
 
   Future createTrip() async {
-    
+
     final tripToSave = TripModel(
       people: _selectedPeopleIndex,
       location: _selectedCountry,
