@@ -24,11 +24,22 @@ class Server{
         .catchError((error) => {print("Error")});
   }
 
-  void addTrip(TripModel trip) async {
-    await _db.collection("Users")
-        .doc(getUID())
-        .collection("Trips")
-        .add(trip.toJson());
+  void addTrip(BasicTripModel trip) async {
+    TripWithOwner tripWithOwner = TripWithOwner(owner: getUID(), tripDetails: trip);
+    await _db.collection("Trips")
+        .add(tripWithOwner.toJson());
+  }
+
+  void deleteTrip(String tripID) async{
+    await _db.collection("Trips")
+        .doc(tripID)
+        .delete();
+  }
+
+  void editTrip(String tripID, Map<String, dynamic> newData) async{
+    await _db.collection('Trips')
+        .doc(tripID)
+        .update(newData);
   }
 
   Future<Map<String, dynamic>> getUserData() async {
@@ -41,12 +52,13 @@ class Server{
   Future<List<Map<String, dynamic>>> getTrips() async {
     tripsList.clear();
 
-    final tripsCollectionRef = _db.collection("Users").doc(getUID()).collection("Trips");
+    final tripsCollectionRef = _db.collection("Trips");
 
     try{
-      final QuerySnapshot snapshot = await tripsCollectionRef.get();
+      final QuerySnapshot snapshot = await tripsCollectionRef.where('owner', isEqualTo: getUID()).get();
       snapshot.docs.forEach((DocumentSnapshot doc) {
         final tripData = doc.data()! as Map<String, dynamic>;
+        tripData['tripID'] = doc.id;
         tripsList.add(tripData);
       });
       return tripsList;

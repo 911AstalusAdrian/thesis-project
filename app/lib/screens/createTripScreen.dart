@@ -19,10 +19,10 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   Server server = Server();
 
   DateTime _startDate = DateTime.now();
-  TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
 
   DateTime _endDate = DateTime.now();
-  TextEditingController _endDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
 
   int _selectedPeopleIndex = -1;
   int _selectedTransportIndex = -1;
@@ -122,6 +122,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                       children: [
                         const FancyText(text: "Choose the dates:"),
                         TextFormField(
+                          readOnly: true,
                           controller: _startDateController,
                           decoration: const InputDecoration(
                               icon: Icon(Icons.calendar_today),
@@ -141,6 +142,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                           },
                         ),
                         TextFormField(
+                          readOnly: true,
                           controller: _endDateController,
                           decoration: const InputDecoration(
                               icon: Icon(Icons.calendar_today),
@@ -202,7 +204,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         ),
                   ])),
                   ElevatedButton(
-                    onPressed: () async { createTrip(); },
+                    onPressed: () async { _createTrip(); },
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 30.0),
@@ -220,9 +222,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     ));
   }
 
-  Future createTrip() async {
+  Future _createTrip() async {
 
-    final tripToSave = TripModel(
+    final tripToSave = BasicTripModel(
       people: _selectedPeopleIndex,
       location: _selectedCountry,
       startDate: _startDate,
@@ -231,10 +233,10 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     );
 
     server.addTrip(tripToSave);
-    showAlertDialog(context);
+    _showAlertDialog(context);
   }
 
-  showAlertDialog(BuildContext context){
+  _showAlertDialog(BuildContext context){
     AlertDialog alert = AlertDialog(
       title: const Text("Trip Created!"),
       actions: [
