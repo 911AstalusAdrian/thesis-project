@@ -78,8 +78,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                                   value: '4',
                                   icon: const Icon(Icons.group_add_outlined)),
                               SelectionCard(
-                                  isSelected: _selectedPeopleIndex == 5,
-                                  onTap: () { setState(() { _selectedPeopleIndex = 5; });},
+                                  isSelected: _selectedPeopleIndex == 0,
+                                  onTap: () { setState(() { _selectedPeopleIndex = 0; });},
                                   value: 'Don\'t know yet',
                                   icon: const Icon(Icons.question_mark_outlined))
                             ],

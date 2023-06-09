@@ -10,7 +10,7 @@ class FancyText extends StatelessWidget {
     return Text(text,
         style: const TextStyle(
           fontFamily: 'Kanit',
-          fontSize: 20.0,
+          fontSize: 18.0,
         ));
   }
 }

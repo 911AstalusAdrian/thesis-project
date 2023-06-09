@@ -6,13 +6,15 @@ class BasicTripModel {
   final DateTime startDate;
   final DateTime endDate;
   final String transportation;
+  final bool hasItinerary;
 
   const BasicTripModel(
       {required this.people,
       required this.location,
       required this.startDate,
       required this.endDate,
-      required this.transportation});
+      required this.transportation,
+        this.hasItinerary = false});
 
   factory BasicTripModel.fromJson(Map<String, dynamic> jsonData) => BasicTripModel(
         people: jsonData['people'],
@@ -20,6 +22,7 @@ class BasicTripModel {
         startDate: jsonData['startDate'],
         endDate: jsonData['endDate'],
         transportation: jsonData['transportation'],
+        hasItinerary: jsonData['hasItinerary']
       );
 
   Map<String, dynamic> toJson() => {
@@ -28,6 +31,7 @@ class BasicTripModel {
         'startDate': startDate,
         'endDate': endDate,
         'transportation': transportation,
+        'hasItinerary': hasItinerary
       };
 }
 
@@ -45,7 +49,8 @@ class TripWithOwner {
               location: jsonData['location'],
               startDate: jsonData['startDate'],
               endDate: jsonData['endDate'],
-              transportation: jsonData['transportation']));
+              transportation: jsonData['transportation'],
+              hasItinerary: jsonData['hasItinerary']));
 
   Map<String, dynamic> toJson() => {
         'owner': owner,
@@ -54,5 +59,6 @@ class TripWithOwner {
         'startDate': tripDetails.startDate,
         'endDate': tripDetails.endDate,
         'transportation': tripDetails.transportation,
+        'hasItinerary': tripDetails.hasItinerary
       };
 }
