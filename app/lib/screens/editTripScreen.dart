@@ -1,8 +1,13 @@
 import 'package:app/model/trip_model.dart';
 import 'package:app/widgets/fancyText.dart';
+import 'package:app/widgets/mapPicker.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:intl/intl.dart';
+import '../server/server.dart';
 import '../widgets/selectionCard.dart';
+import 'mainNavigationScreen.dart';
 
 class EditTripScreen extends StatefulWidget {
   const EditTripScreen({Key? key,
@@ -21,13 +26,11 @@ class _EditTripScreenState extends State<EditTripScreen> {
   late final String tripID;
   late final BasicTripModel trip;
 
-  String _tripName = "";
   final TextEditingController _tripNameCtrl = TextEditingController();
 
   String _invitedUser = "";
   final TextEditingController _inviteUserCtrl = TextEditingController();
 
-  String _lodgingLocation = "";
   final TextEditingController _lodgingCtrl = TextEditingController();
 
 
@@ -43,6 +46,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
   String _selectedTransport = "";
   String _selectedCountry = "";
 
+  Server server = Server();
 
 
   @override
@@ -90,7 +94,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                             controller: _tripNameCtrl,
                             enableSuggestions: false,
                             autocorrect: false,
-                            decoration: InputDecoration(hintText: "Trip to ${trip.location}")
+                            decoration: InputDecoration(hintText: trip.title)
                         ),
                       )
                     ],
@@ -102,12 +106,13 @@ class _EditTripScreenState extends State<EditTripScreen> {
                     children: [
                       const FancyText(text: "Where will you be staying?"),
                       TextField(
+                        readOnly: true,
                         controller: _lodgingCtrl,
                         decoration: const InputDecoration(
-                            icon: Icon(Icons.location_on_outlined)
+                            icon: Icon(Icons.location_on_outlined,)
                         ),
                         onTap: () {
-                          _openMap(context);
+                          // _openMap(context);
                         },
                       )
                     ],
@@ -245,7 +250,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () async { },
+                  onPressed: () async { _openItineraryScreen(); },
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 30.0),
@@ -255,7 +260,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                   child: const Text("Create Itinerary"),
                 ),
                 ElevatedButton(
-                  onPressed: () async { },
+                  onPressed: () async { _saveChanges(); },
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 30.0),
@@ -272,7 +277,69 @@ class _EditTripScreenState extends State<EditTripScreen> {
     );
   }
 
-  _openMap(BuildContext context){}
+  _saveChanges(){
 
+    final BasicTripModel finalTrip = BasicTripModel(
+      title: _tripNameCtrl.text != "" ? _tripNameCtrl.text : trip.title,
+        people: _selectedPeopleIndex,
+        location: trip.location,
+        lodging: _lodgingCtrl.text,
+        startDate: _startDate,
+        endDate: _endDate,
+        transportation: _selectedTransport);
+
+    server.editTrip(tripID, finalTrip);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 2)));
+  }
+
+  _openItineraryScreen(){
+
+  }
+
+  _openMap(BuildContext context){
+    const LatLng defaultPos = LatLng(37.422, -122.084);
+    LatLng selectedPos = defaultPos;
+
+    AlertDialog map = AlertDialog(
+      content: Container(
+        width: double.maxFinite,
+        height: 300,
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(
+            target: defaultPos,
+            zoom: 15
+          ),
+          markers: <Marker>{
+            Marker(
+              markerId: const MarkerId("selected_location_marker"),
+              position: selectedPos,
+              draggable: true,
+              onDragEnd: (LatLng latLng) {
+                setState(() { selectedPos = latLng; });
+              }
+            )
+          },
+          onTap: (LatLng latLng) {
+            setState(() { selectedPos = latLng; });
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("OK"),
+        )
+      ],
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return MapPicker();
+        });
+
+  }
 
 }

@@ -101,7 +101,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                             "Italy",
                             "Japan",
                             "Spain",
-                            "Morrocco"
+                            "Morrocco",
+                            "Romania"
                           ], // TODO get countries from some sort of repo
                           dropdownSearchDecoration: const InputDecoration(
                             labelText: "Choose a country",

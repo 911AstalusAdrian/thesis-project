@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+
 class BasicTripModel {
   final int people;
+  final String title;
   final String location;
+  final String lodging;
   final DateTime startDate;
   final DateTime endDate;
   final String transportation;
@@ -10,7 +14,9 @@ class BasicTripModel {
 
   const BasicTripModel(
       {required this.people,
+        this.title = "Default Trip",
       required this.location,
+        this.lodging = "",
       required this.startDate,
       required this.endDate,
       required this.transportation,
@@ -18,7 +24,9 @@ class BasicTripModel {
 
   factory BasicTripModel.fromJson(Map<String, dynamic> jsonData) => BasicTripModel(
         people: jsonData['people'],
+        title: jsonData['title'],
         location: jsonData['location'],
+        lodging: jsonData['lodging'],
         startDate: jsonData['startDate'],
         endDate: jsonData['endDate'],
         transportation: jsonData['transportation'],
@@ -27,7 +35,9 @@ class BasicTripModel {
 
   Map<String, dynamic> toJson() => {
         'people': people,
+        'title': title,
         'location': location,
+        'lodging': lodging,
         'startDate': startDate,
         'endDate': endDate,
         'transportation': transportation,
@@ -44,21 +54,12 @@ class TripWithOwner {
   factory TripWithOwner.fromJson(Map<String, dynamic> jsonData) =>
       TripWithOwner(
           owner: jsonData['owner'],
-          tripDetails: BasicTripModel(
-              people: jsonData['people'],
-              location: jsonData['location'],
-              startDate: jsonData['startDate'],
-              endDate: jsonData['endDate'],
-              transportation: jsonData['transportation'],
-              hasItinerary: jsonData['hasItinerary']));
+          tripDetails: BasicTripModel.fromJson(jsonData));
 
-  Map<String, dynamic> toJson() => {
-        'owner': owner,
-        'people': tripDetails.people,
-        'location': tripDetails.location,
-        'startDate': tripDetails.startDate,
-        'endDate': tripDetails.endDate,
-        'transportation': tripDetails.transportation,
-        'hasItinerary': tripDetails.hasItinerary
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> finalMap = <String, dynamic>{};
+    finalMap.assign('owner', owner);
+    finalMap.addAll(tripDetails.toJson());
+    return finalMap;
+  }
 }

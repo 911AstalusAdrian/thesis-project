@@ -16,6 +16,13 @@ class Server{
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
+  Future<String> getName() async {
+    DocumentSnapshot snapshot = await  _db.collection("Users")
+    .doc(getUID()).get();
+    Map<String, dynamic> data =  snapshot.data() as Map<String, dynamic>;
+    return data['fName'];
+  }
+
   void addUser(String uid, UserModel user) async{
     await _db.collection("Users")
         .doc(uid)
@@ -36,10 +43,10 @@ class Server{
         .delete();
   }
 
-  void editTrip(String tripID, Map<String, dynamic> newData) async{
+  void editTrip(String tripID, BasicTripModel trip) async{
     await _db.collection('Trips')
         .doc(tripID)
-        .update(newData);
+        .update(trip.toJson());
   }
 
   Future<Map<String, dynamic>> getUserData() async {
@@ -49,7 +56,7 @@ class Server{
     return userData;
   }
 
-  Future<List<Map<String, dynamic>>> getTrips() async {
+  Future<List<Map<String, dynamic>>> getOwnedTrips() async {
     tripsList.clear();
 
     final tripsCollectionRef = _db.collection("Trips");
