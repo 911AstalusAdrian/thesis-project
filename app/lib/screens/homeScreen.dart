@@ -1,3 +1,4 @@
+import 'package:app/model/trip_model.dart';
 import 'package:app/screens/itineraryScreen.dart';
 import 'package:app/widgets/fancyText.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Server server = Server();
 
   final String uid = Server.getUID();
-  late final String name;
 
   @override
   initState() {
     super.initState();
-    _getName();
   }
 
   @override
@@ -29,7 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FancyText(text: "Hello, $name!"),
+          FutureBuilder(
+            future: server.getName(),
+            builder: (BuildContext ctx, AsyncSnapshot<dynamic> snapshot) {
+              if (snapshot.hasData) {
+                String name = snapshot.data!;
+                return FancyText(text: "Hello, $name!");
+              } else {
+                return const Center(child: Text("Something went wrong"));
+              }
+            },
+          ),
           const FancyText(text: "Here's how your upcoming Trips look like:"),
           Container(
             child: FutureBuilder(
@@ -58,13 +67,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               int noOfDays = daysLeft.inDays;
 
                               String tripID = data[index]['tripID'];
+                              BasicTripModel trip = BasicTripModel.fromJson(data[index]);
 
                               return ListTile(
                                 leading: const Icon(Icons.flight_takeoff),
                                 title: Text(data[index]['title']),
                                 subtitle: noOfDays == 0 ? const Text("Today") : Text("$noOfDays day(s) left"),
                                 trailing: TextButton(
-                                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryScreen(tripID: tripID))),
+                                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryScreen(tripID: tripID, trip: trip,))),
                                   child: const Text("View Itinerary"),
                                 ),
                               );
@@ -79,12 +89,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
-
-  _getName() async {
-    String n = await server.getName();
-    setState(() {
-      name = n;
-    });
   }
 }

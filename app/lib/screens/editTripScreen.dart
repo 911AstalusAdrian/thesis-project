@@ -294,9 +294,19 @@ class _EditTripScreenState extends State<EditTripScreen> {
   }
 
   _openItineraryScreen(){
+
+    final BasicTripModel finalTrip = BasicTripModel(
+        title: _tripNameCtrl.text != "" ? _tripNameCtrl.text : trip.title,
+        people: _selectedPeopleIndex,
+        location: trip.location,
+        lodging: _lodgingCtrl.text,
+        startDate: _startDate,
+        endDate: _endDate,
+        transportation: _selectedTransport);
+
     Navigator.pushReplacement(
         context,
-        MaterialPageRoute( builder: (context) => ItineraryScreen(tripID: tripID)));
+        MaterialPageRoute( builder: (context) => ItineraryScreen(tripID: tripID, trip: finalTrip)));
   }
 
   _openMap(BuildContext context){

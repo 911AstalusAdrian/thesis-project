@@ -1,4 +1,5 @@
 
+import 'package:app/model/entry_model.dart';
 import 'package:app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ class Server{
   // final _userRepo = Get.put(UserRepository());
 
   List<Map<String, dynamic>> tripsList = [];
+  List<Map<String, dynamic>> itineraryList = [];
 
   final _db = FirebaseFirestore.instance;
 
@@ -32,6 +34,14 @@ class Server{
         .catchError((error) => {print("Error")});
   }
 
+  void addEntry(String tripId, ItineraryEntry entry) async {
+
+    await _db.collection("Trips")
+        .doc(tripId)
+        .collection("Itinerary")
+        .add(entry.toJson());
+  }
+
   void addTrip(BasicTripModel trip) async {
     TripWithOwner tripWithOwner = TripWithOwner(owner: getUID(), tripDetails: trip);
     await _db.collection("Trips")
@@ -50,6 +60,8 @@ class Server{
         .update(trip.toJson());
   }
 
+
+
   Future<Map<String, dynamic>> getTripDetails(String tripID) async {
     final tripsDocumentRef = _db.collection("Trips").doc(tripID);
     final DocumentSnapshot snapshot = await tripsDocumentRef.get();
@@ -62,6 +74,27 @@ class Server{
     final DocumentSnapshot snapshot = await userDocumentRef.get();
     final userData = snapshot.data()! as Map<String, dynamic>;
     return userData;
+  }
+
+  Future<List<Map<String, dynamic>>> getItinerary(String tripID) async {
+    itineraryList.clear();
+
+    final itineraryCollectionRef =
+    _db.collection("Trips")
+        .doc(tripID)
+        .collection("Itinerary");
+
+    try{
+      final QuerySnapshot snapshot = await itineraryCollectionRef.get();
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        final itineraryEntry = doc.data()! as Map<String, dynamic>;
+        itineraryList.add(itineraryEntry);
+      });
+      return itineraryList;
+    } catch(error) {
+      print("Error getting the itinerary list");
+      return [];
+    }
   }
 
   Future<List<Map<String, dynamic>>> getOwnedTrips() async {
