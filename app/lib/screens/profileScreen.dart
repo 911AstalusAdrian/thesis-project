@@ -186,9 +186,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _openEditScreen(BuildContext context, Map<String, dynamic> tripData) {
     String tripID = tripData['tripID'];
 
-    tripData['endDate'] = tripData['endDate'].toDate();
-    tripData['startDate'] = tripData['startDate'].toDate();
-
     BasicTripModel basicTrip = BasicTripModel.fromJson(tripData);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>

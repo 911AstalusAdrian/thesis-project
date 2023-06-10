@@ -1,3 +1,4 @@
+import 'package:app/screens/itineraryScreen.dart';
 import 'package:app/widgets/fancyText.dart';
 import 'package:flutter/material.dart';
 
@@ -56,10 +57,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               Duration daysLeft = startDate.difference(currentDate);
                               int noOfDays = daysLeft.inDays;
 
+                              String tripID = data[index]['tripID'];
+
                               return ListTile(
                                 leading: const Icon(Icons.flight_takeoff),
                                 title: Text(data[index]['title']),
                                 subtitle: noOfDays == 0 ? const Text("Today") : Text("$noOfDays day(s) left"),
+                                trailing: TextButton(
+                                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryScreen(tripID: tripID))),
+                                  child: const Text("View Itinerary"),
+                                ),
                               );
                             }),
                       );

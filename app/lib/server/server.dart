@@ -1,3 +1,4 @@
+
 import 'package:app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,6 +48,13 @@ class Server{
     await _db.collection('Trips')
         .doc(tripID)
         .update(trip.toJson());
+  }
+
+  Future<Map<String, dynamic>> getTripDetails(String tripID) async {
+    final tripsDocumentRef = _db.collection("Trips").doc(tripID);
+    final DocumentSnapshot snapshot = await tripsDocumentRef.get();
+    final tripData = snapshot.data()! as Map<String, dynamic>;
+    return tripData;
   }
 
   Future<Map<String, dynamic>> getUserData() async {

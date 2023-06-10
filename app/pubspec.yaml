@@ -47,6 +47,7 @@ dependencies:
   google_maps_flutter: ^2.3.0
   intl: ^0.18.1
   flutter_google_places: ^0.3.0
+  grouped_list: ^5.1.2
 
 
 dev_dependencies:

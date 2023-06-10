@@ -1,4 +1,5 @@
 import 'package:app/model/trip_model.dart';
+import 'package:app/screens/itineraryScreen.dart';
 import 'package:app/widgets/fancyText.dart';
 import 'package:app/widgets/mapPicker.dart';
 import 'package:flutter/material.dart';
@@ -293,7 +294,9 @@ class _EditTripScreenState extends State<EditTripScreen> {
   }
 
   _openItineraryScreen(){
-
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute( builder: (context) => ItineraryScreen(tripID: tripID)));
   }
 
   _openMap(BuildContext context){

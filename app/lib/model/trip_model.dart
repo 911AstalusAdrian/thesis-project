@@ -27,8 +27,8 @@ class BasicTripModel {
         title: jsonData['title'],
         location: jsonData['location'],
         lodging: jsonData['lodging'],
-        startDate: jsonData['startDate'],
-        endDate: jsonData['endDate'],
+        startDate: jsonData['startDate'].toDate(),
+        endDate: jsonData['endDate'].toDate(),
         transportation: jsonData['transportation'],
         hasItinerary: jsonData['hasItinerary']
       );
