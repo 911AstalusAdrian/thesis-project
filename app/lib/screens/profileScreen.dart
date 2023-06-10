@@ -25,20 +25,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           Center(
-              child: FutureBuilder<DocumentSnapshot>(
-                  future: users.doc(uid).get(), // the only way this thing works
+              child: FutureBuilder(
+                  future: server.getUserData(), // the only way this thing works
                   builder: (BuildContext ctx,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Text('${snapshot.error} occurred'));
                     } else if (snapshot.hasData) {
-                      final data = snapshot.data!;
+                      Map<String, dynamic> data = snapshot.data! as Map<String, dynamic>;
 
                       return Center(
                           child: Column(

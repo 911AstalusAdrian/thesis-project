@@ -35,7 +35,7 @@ class BasicTripModel {
 
   Map<String, dynamic> toJson() => {
         'people': people,
-        'title': title,
+        'title': title == "Default Trip" ? "Trip to $location" : title,
         'location': location,
         'lodging': lodging,
         'startDate': startDate,

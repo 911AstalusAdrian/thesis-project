@@ -258,7 +258,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                       backgroundColor: Colors.orangeAccent,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30))),
-                  child: const Text("Create Itinerary"),
+                  child: const Text("View Itinerary"),
                 ),
                 ElevatedButton(
                   onPressed: () async { _saveChanges(); },
@@ -304,7 +304,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
         endDate: _endDate,
         transportation: _selectedTransport);
 
-    Navigator.pushReplacement(
+    Navigator.push(
         context,
         MaterialPageRoute( builder: (context) => ItineraryScreen(tripID: tripID, trip: finalTrip)));
   }

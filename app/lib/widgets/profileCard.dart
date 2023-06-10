@@ -7,7 +7,7 @@ import '../model/user_model.dart';
 class ProfileCard extends StatefulWidget {
   const ProfileCard({Key? key, required this.data}) : super(key: key);
 
-  final DocumentSnapshot<Object?> data;
+  final Map<String, dynamic> data;
 
   @override
   State<ProfileCard> createState() => _ProfileCardState();
@@ -20,11 +20,11 @@ class _ProfileCardState extends State<ProfileCard> {
 
   @override
   Widget build(BuildContext context) {
-
-    final UserModel user = UserModel(fName: widget.data.get('fName'),
-        lName: widget.data.get('fName'),
-        userName: widget.data.get('fName'),
-        eMail: widget.data.get('fName'));
+    final UserModel user = UserModel(
+        fName: widget.data['fName'],
+        lName: widget.data['lName'],
+        userName: widget.data['userName'],
+        eMail: widget.data['eMail']);
 
     fNameCtrl.text = user.fName;
 
