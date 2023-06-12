@@ -10,7 +10,6 @@ class BasicTripModel {
   final DateTime startDate;
   final DateTime endDate;
   final String transportation;
-  final bool hasItinerary;
 
   const BasicTripModel(
       {required this.people,
@@ -19,8 +18,7 @@ class BasicTripModel {
         this.lodging = "",
       required this.startDate,
       required this.endDate,
-      required this.transportation,
-        this.hasItinerary = false});
+      required this.transportation});
 
   factory BasicTripModel.fromJson(Map<String, dynamic> jsonData) => BasicTripModel(
         people: jsonData['people'],
@@ -30,7 +28,6 @@ class BasicTripModel {
         startDate: jsonData['startDate'].toDate(),
         endDate: jsonData['endDate'].toDate(),
         transportation: jsonData['transportation'],
-        hasItinerary: jsonData['hasItinerary']
       );
 
   Map<String, dynamic> toJson() => {
@@ -41,7 +38,6 @@ class BasicTripModel {
         'startDate': startDate,
         'endDate': endDate,
         'transportation': transportation,
-        'hasItinerary': hasItinerary
       };
 }
 

@@ -4,14 +4,13 @@ import 'package:app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../model/trip_model.dart';
+import 'model/trip_model.dart';
 
-class Server{
+class FirebaseHandler{
 
-  // final _userRepo = Get.put(UserRepository());
-
-  List<Map<String, dynamic>> tripsList = [];
-  List<Map<String, dynamic>> itineraryList = [];
+  final List<Map<String, dynamic>> _tripsList = [];
+  final List<Map<String, dynamic>> _ongoingAndFutureTripsList = [];
+  final List<Map<String, dynamic>> _itineraryList = [];
 
   final _db = FirebaseFirestore.instance;
 
@@ -21,7 +20,7 @@ class Server{
 
   Future<String> getName() async {
     DocumentSnapshot snapshot = await  _db.collection("Users")
-    .doc(getUID()).get();
+        .doc(getUID()).get();
     Map<String, dynamic> data =  snapshot.data() as Map<String, dynamic>;
     return data['fName'];
   }
@@ -77,7 +76,7 @@ class Server{
   }
 
   Future<List<Map<String, dynamic>>> getItinerary(String tripID) async {
-    itineraryList.clear();
+    _itineraryList.clear();
 
     final itineraryCollectionRef =
     _db.collection("Trips")
@@ -88,17 +87,66 @@ class Server{
       final QuerySnapshot snapshot = await itineraryCollectionRef.get();
       snapshot.docs.forEach((DocumentSnapshot doc) {
         final itineraryEntry = doc.data()! as Map<String, dynamic>;
-        itineraryList.add(itineraryEntry);
+        _itineraryList.add(itineraryEntry);
       });
-      return itineraryList;
+      return _itineraryList;
     } catch(error) {
       print("Error getting the itinerary list");
       return [];
     }
   }
 
+  Future<List<Map<String, dynamic>>> getOngoingAndFutureTrips() async{
+    _ongoingAndFutureTripsList.clear();
+
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day, 0, 0 ,0);
+    Timestamp todayTimestamp = Timestamp.fromDate(today);
+    
+    final tripsCollectionRef = _db.collection("Trips");
+
+    try{
+      final QuerySnapshot snapshot = await tripsCollectionRef
+          .where('startDate', isLessThan: todayTimestamp)
+          .get();
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        final tripData = doc.data()! as Map<String, dynamic>;
+        tripData['ongoing'] = true;
+        tripData['tripID'] = doc.id;
+        Timestamp endDate = tripData['endDate'] as Timestamp;
+        if (todayTimestamp.compareTo(endDate) < 0) {
+          _ongoingAndFutureTripsList.add(tripData);
+        }
+      });
+    } catch (error) {
+      print(error.toString());
+      print("Error getting Ongoing Trips!");
+    }
+
+
+    // get future trips
+    try{
+      final QuerySnapshot snapshot = await tripsCollectionRef
+          .where("startDate", isGreaterThanOrEqualTo: todayTimestamp)
+          .orderBy("startDate", descending: false)
+          .get();
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        final tripData = doc.data()! as Map<String, dynamic>;
+        tripData['ongoing'] = false;
+        tripData['tripID'] = doc.id;
+        _ongoingAndFutureTripsList.add(tripData);
+      });
+      return _ongoingAndFutureTripsList;
+    } catch (error) {
+      print("Error getting Future Trips!");
+      return [];
+    }
+    
+  }
+
+
   Future<List<Map<String, dynamic>>> getOwnedTrips() async {
-    tripsList.clear();
+    _tripsList.clear();
 
     final tripsCollectionRef = _db.collection("Trips");
 
@@ -107,12 +155,12 @@ class Server{
       snapshot.docs.forEach((DocumentSnapshot doc) {
         final tripData = doc.data()! as Map<String, dynamic>;
         tripData['tripID'] = doc.id;
-        tripsList.add(tripData);
+        _tripsList.add(tripData);
       });
-      return tripsList;
+      return _tripsList;
     } catch (error) {
-      print("Error");
-      return tripsList;
+      print("Error getting Owned Trips");
+      return [];
     }
   }
 }

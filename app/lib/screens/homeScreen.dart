@@ -3,7 +3,7 @@ import 'package:app/screens/itineraryScreen.dart';
 import 'package:app/widgets/fancyText.dart';
 import 'package:flutter/material.dart';
 
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,9 +13,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Server server = Server();
+  FirebaseHandler handler = FirebaseHandler();
 
-  final String uid = Server.getUID();
+  final String uid = FirebaseHandler.getUID();
 
   @override
   initState() {
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FutureBuilder(
-              future: server.getName(),
+              future: handler.getName(),
               builder: (BuildContext ctx, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasData) {
                   String name = snapshot.data!;
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const FancyText(text: "Here's how your upcoming Trips look like:"),
             Container(
               child: FutureBuilder(
-                  future: server.getOwnedTrips(),
+                  future: handler.getOngoingAndFutureTrips(),
                   builder: (BuildContext ctx, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -64,18 +64,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 DateTime currentDate = DateTime.now();
                                 currentDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
                                 DateTime startDate = data[index]['startDate'].toDate();
-                                Duration daysLeft = startDate.difference(currentDate);
-                                int noOfDays = daysLeft.inDays;
-
-                                String tripID = data[index]['tripID'];
-                                BasicTripModel trip = BasicTripModel.fromJson(data[index]);
+                                int noOfDays = startDate.difference(currentDate).inDays;
+                                bool ongoing = data[index]['ongoing'];
 
                                 return ListTile(
                                   leading: const Icon(Icons.flight_takeoff),
                                   title: Text(data[index]['title']),
-                                  subtitle: noOfDays == 0 ? const Text("Today") : Text("$noOfDays day(s) left"),
+                                  subtitle: ongoing == true
+                                      ? const Text("ONGOING")
+                                      : noOfDays == 0
+                                          ? const Text("Today")
+                                          : Text("$noOfDays day(s) left"),
                                   trailing: TextButton(
-                                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItineraryScreen(tripID: tripID, trip: trip,))),
+                                    onPressed: () {
+                                      String tripID = data[index]['tripID'];
+                                      BasicTripModel trip = BasicTripModel.fromJson(data[index]);
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => ItineraryScreen(tripID: tripID, trip: trip)));
+                                    },
                                     child: const Text("View Itinerary"),
                                   ),
                                 );

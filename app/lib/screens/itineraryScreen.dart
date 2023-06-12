@@ -3,7 +3,7 @@ import 'package:app/model/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:grouped_list/grouped_list.dart';
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 
 class ItineraryScreen extends StatefulWidget {
   const ItineraryScreen({Key? key, required this.tripID, required this.trip}) : super(key: key);
@@ -16,7 +16,7 @@ class ItineraryScreen extends StatefulWidget {
 }
 
 class _ItineraryScreenState extends State<ItineraryScreen> {
-  Server server = Server();
+  FirebaseHandler handler = FirebaseHandler();
   late BasicTripModel trip;
 
   @override
@@ -35,7 +35,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
       ),
       body: SafeArea(
         child: FutureBuilder(
-          future: server.getItinerary(widget.tripID),
+          future: handler.getItinerary(widget.tripID),
           builder: (BuildContext ctx, AsyncSnapshot<dynamic> snapshot){
 
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -200,7 +200,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
         startTime: start.format(context),
         endTime: end.format(context));
 
-    server.addEntry(widget.tripID, entry);
+    handler.addEntry(widget.tripID, entry);
     setState(() {});
 
   }

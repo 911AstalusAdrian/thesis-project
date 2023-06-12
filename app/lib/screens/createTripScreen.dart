@@ -4,7 +4,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import '../model/trip_model.dart';
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 import '../widgets/selectionCard.dart';
 
 class CreateTripScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class CreateTripScreen extends StatefulWidget {
 
 class _CreateTripScreenState extends State<CreateTripScreen> {
 
-  Server server = Server();
+  FirebaseHandler handler = FirebaseHandler();
 
   DateTime _startDate = DateTime.now();
   final TextEditingController _startDateController = TextEditingController();
@@ -233,7 +233,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       transportation: _selectedTransport
     );
 
-    server.addTrip(tripToSave);
+    handler.addTrip(tripToSave);
     _showAlertDialog(context);
   }
 

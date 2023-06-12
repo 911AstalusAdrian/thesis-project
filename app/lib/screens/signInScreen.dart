@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../model/user_model.dart';
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
 
-  Server server = Server();
+  FirebaseHandler handler = FirebaseHandler();
 
   final _formKey = GlobalKey<FormState>();
   final _secureStorage = const FlutterSecureStorage();
@@ -219,7 +219,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     String uid = await _register();
 
-    server.addUser(uid, userToRegister);
+    handler.addUser(uid, userToRegister);
 
     _secureStorage.write(key: "uid", value: uid);
     if (!mounted) return; // getting rid of the warning for below call

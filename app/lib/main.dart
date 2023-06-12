@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/notificationsHandler.dart';
 import 'package:app/screens/loginScreen.dart';
 import 'package:app/screens/mainNavigationScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,6 +50,9 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+
+    MessagesHandler.setupMessaging();
+
     return MaterialApp(
 
       initialRoute:

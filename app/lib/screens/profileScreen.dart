@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import '../model/trip_model.dart';
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 import '../widgets/profileCard.dart';
 import 'editTripScreen.dart';
 
@@ -14,8 +14,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String uid = Server.getUID();
-  Server server = Server();
+  final String uid = FirebaseHandler.getUID();
+  FirebaseHandler handler = FirebaseHandler();
   CollectionReference users = FirebaseFirestore.instance.collection("Users");
 
   @override
@@ -30,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Center(
               child: FutureBuilder(
-                  future: server.getUserData(), // the only way this thing works
+                  future: handler.getUserData(), // the only way this thing works
                   builder: (BuildContext ctx,
                       AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   })),
           Center(
             child: FutureBuilder(
-                future: server.getOwnedTrips(),
+                future: handler.getOwnedTrips(),
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -187,9 +187,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String tripID = tripData['tripID'];
 
     BasicTripModel basicTrip = BasicTripModel.fromJson(tripData);
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            EditTripScreen(tripID: tripID, tripModel: basicTrip)));
+    Navigator.of(context)
+        .push(MaterialPageRoute( builder: (context) =>
+            EditTripScreen(tripID: tripID, tripModel: basicTrip)))
+        .then( (value) { setState(() {}); } );
   }
 
   _confirmTripDelete(BuildContext context, String tripID) {
@@ -198,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       actions: [
         TextButton(
             onPressed: () {
-              server.deleteTrip(tripID);
+              handler.deleteTrip(tripID);
               Navigator.of(context).pop();
               setState(() {});
             },

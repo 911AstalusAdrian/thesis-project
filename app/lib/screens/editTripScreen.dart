@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:intl/intl.dart';
-import '../server/server.dart';
+import '../firebaseHandler.dart';
 import '../widgets/selectionCard.dart';
 import 'mainNavigationScreen.dart';
 
@@ -47,7 +47,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
   String _selectedTransport = "";
   String _selectedCountry = "";
 
-  Server server = Server();
+  FirebaseHandler handler = FirebaseHandler();
 
 
   @override
@@ -58,6 +58,8 @@ class _EditTripScreenState extends State<EditTripScreen> {
     _selectedTransport = trip.transportation;
     _startDateController.text = DateFormat("dd-MM-yyyy").format(trip.startDate);
     _endDateController.text = DateFormat("dd-MM-yyyy").format(trip.endDate);
+    _startDate = trip.startDate;
+    _endDate = trip.endDate;
     _selectedPeopleIndex = trip.people;
     switch (_selectedTransport){
       case 'car':
@@ -78,6 +80,9 @@ class _EditTripScreenState extends State<EditTripScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    setState(() {});
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -251,16 +256,6 @@ class _EditTripScreenState extends State<EditTripScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () async { _openItineraryScreen(); },
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 30.0),
-                      backgroundColor: Colors.orangeAccent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30))),
-                  child: const Text("View Itinerary"),
-                ),
-                ElevatedButton(
                   onPressed: () async { _saveChanges(); },
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -289,8 +284,8 @@ class _EditTripScreenState extends State<EditTripScreen> {
         endDate: _endDate,
         transportation: _selectedTransport);
 
-    server.editTrip(tripID, finalTrip);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigationScreen(index: 2)));
+    handler.editTrip(tripID, finalTrip);
+    Navigator.of(context).pop();
   }
 
   _openItineraryScreen(){
