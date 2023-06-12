@@ -14,9 +14,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String uid = FirebaseHandler.getUID();
   FirebaseHandler handler = FirebaseHandler();
-  CollectionReference users = FirebaseFirestore.instance.collection("Users");
 
   @override
   void initState() {
@@ -26,91 +24,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Center(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(
+                child: FutureBuilder(
+                    future: handler.getUserData(), // the only way this thing works
+                    builder: (BuildContext ctx,
+                        AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('${snapshot.error} occurred'));
+                      } else if (snapshot.hasData) {
+                        Map<String, dynamic> data = snapshot.data! as Map<String, dynamic>;
+                        return Center(
+                            child: Column(
+                              children: [
+                                Align(
+                                    alignment: Alignment.topCenter,
+                                    child: ProfileCard(data: data)),
+                                TextButton(
+                                    onPressed: () {},
+                                    child: const Text("Change password"))
+                              ],
+                            ));
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    })),
+            Center(
               child: FutureBuilder(
-                  future: handler.getUserData(), // the only way this thing works
-                  builder: (BuildContext ctx,
-                      AsyncSnapshot snapshot) {
+                  future: handler.getOwnedTrips(),
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('${snapshot.error} occurred'));
+                      return Center(child: Text('${snapshot.error} occured'));
                     } else if (snapshot.hasData) {
-                      Map<String, dynamic> data = snapshot.data! as Map<String, dynamic>;
+                      List<Map<String, dynamic>> data = snapshot.data!;
+                      if (data.isEmpty) {
+                        return const Center(
+                            child: Text("You have no trips planned yet!"));
+                      } else {
+                        return SizedBox(
+                          height: 450,
+                          child: ListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (BuildContext context, int index) {
 
-                      return Center(
-                          child: Column(
-                            children: [
-                              Align(
-                                  alignment: Alignment.topCenter,
-                                  child: ProfileCard(data: data)),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: const Text("Change password"))
-                            ],
-                          ));
+                                String title = data[index]['title'];
+                                String location = data[index]['location'];
+
+                                return ListTile(
+                                    title: Text(title == "Default Trip" ? "Trip to $location" : title),
+                                    subtitle: Text(data[index]['transportation']),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () => _shareTrip(context),
+                                          icon: const Icon(Icons.share),
+                                        ),
+                                        IconButton(
+                                          onPressed: () => _openEditScreen(
+                                              context, data[index]),
+                                          icon: const Icon(Icons.edit_sharp),
+                                        ),
+                                        IconButton(
+                                          onPressed: () => _confirmTripDelete(
+                                              context, data[index]['tripID']),
+                                          icon: const Icon(
+                                              Icons.delete_outline_sharp,
+                                              color: Colors.red),
+                                        ),
+                                      ],
+                                    ));
+                              }),
+                        );
+                      }
                     } else {
                       return const Center(child: CircularProgressIndicator());
                     }
-                  })),
-          Center(
-            child: FutureBuilder(
-                future: handler.getOwnedTrips(),
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('${snapshot.error} occured'));
-                  } else if (snapshot.hasData) {
-                    List<Map<String, dynamic>> data = snapshot.data!;
-                    if (data.isEmpty) {
-                      return const Center(
-                          child: Text("You have no trips planned yet!"));
-                    } else {
-                      return SizedBox(
-                        height: 450,
-                        child: ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (BuildContext context, int index) {
-
-                              String title = data[index]['title'];
-                              String location = data[index]['location'];
-
-                              return ListTile(
-                                  title: Text(title == "Default Trip" ? "Trip to $location" : title),
-                                  subtitle: Text(data[index]['transportation']),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => _shareTrip(context),
-                                        icon: const Icon(Icons.share),
-                                      ),
-                                      IconButton(
-                                        onPressed: () => _openEditScreen(
-                                            context, data[index]),
-                                        icon: const Icon(Icons.edit_sharp),
-                                      ),
-                                      IconButton(
-                                        onPressed: () => _confirmTripDelete(
-                                            context, data[index]['tripID']),
-                                        icon: const Icon(
-                                            Icons.delete_outline_sharp,
-                                            color: Colors.red),
-                                      ),
-                                    ],
-                                  ));
-                            }),
-                      );
-                    }
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                }),
-          ),
-        ],
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }

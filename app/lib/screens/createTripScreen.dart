@@ -50,7 +50,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         vertical: 10.0, horizontal: 0),
                     child: Column(
                       children: [
-                        const FancyText(text: "How many people are going?"),
+                        FancyText(text: "How many people are going?"),
                         SizedBox(
                           height: 90.0,
                           child: ListView(
@@ -93,7 +93,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         vertical: 10.0, horizontal: 25.0),
                     child: Column(
                       children: [
-                        const FancyText(text: "Where do you plan on going?"),
+                        FancyText(text: "Where do you plan on going?"),
                         DropdownSearch<String>(
                           showClearButton: true,
                           items: const  [
@@ -121,7 +121,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         vertical: 10, horizontal: 25),
                     child: Column(
                       children: [
-                        const FancyText(text: "Choose the dates:"),
+                        FancyText(text: "Choose the dates:"),
                         TextFormField(
                           readOnly: true,
                           controller: _startDateController,
@@ -173,7 +173,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                     child: Column(
                       children:[
-                        const FancyText(text: "How do you plan on getting there?"),
+                        FancyText(text: "How do you plan on getting there?"),
                         SizedBox(
                           height: 90.0,
                           child: ListView(

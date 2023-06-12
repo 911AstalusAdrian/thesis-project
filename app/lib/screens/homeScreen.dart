@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
             ),
-            const FancyText(text: "Here's how your upcoming Trips look like:"),
+            FancyText(text: "Here's how your upcoming Trips look like:"),
             Container(
               child: FutureBuilder(
                   future: handler.getOngoingAndFutureTrips(),

@@ -94,7 +94,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const FancyText(text: "Give a name to your Trip: "),
+                      FancyText(text: "Give a name to your Trip: "),
                       Expanded(
                         child: TextField(
                             controller: _tripNameCtrl,
@@ -110,7 +110,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
                   child: Column(
                     children: [
-                      const FancyText(text: "Where will you be staying?"),
+                      FancyText(text: "Where will you be staying?"),
                       TextField(
                         readOnly: true,
                         controller: _lodgingCtrl,
@@ -129,7 +129,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
                     child: Column(
                         children:[
-                          const FancyText(text: "How do you plan on getting there?"),
+                          FancyText(text: "How do you plan on getting there?"),
                           SizedBox(
                             height: 90.0,
                             child: ListView(
@@ -165,7 +165,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                       vertical: 10.0, horizontal: 0),
                   child: Column(
                     children: [
-                      const FancyText(text: "How many people are going?"),
+                      FancyText(text: "How many people are going?"),
                       SizedBox(
                         height: 90.0,
                         child: ListView(
@@ -208,7 +208,7 @@ class _EditTripScreenState extends State<EditTripScreen> {
                       vertical: 10, horizontal: 25),
                   child: Column(
                     children: [
-                      const FancyText(text: "Choose the dates:"),
+                      FancyText(text: "Choose the dates:"),
                       TextFormField(
                         readOnly: true,
                         controller: _startDateController,

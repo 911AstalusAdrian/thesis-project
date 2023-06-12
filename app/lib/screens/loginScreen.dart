@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 175,
           child: Column(
             children: [
-              const FancyText(text: "Forgot my password"),
+              FancyText(text: "Forgot my password"),
               SizedBox(
                   width: 200,
                   child: TextField(
