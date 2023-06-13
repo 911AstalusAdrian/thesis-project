@@ -29,8 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FancyText(text: "Hey there!"),
-            FancyText(text: "Here's how your upcoming Trips look like:"),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              child: FancyText(text: "Hey there!")
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              child: FancyText(text: "Here's how your upcoming Trips look like:")
+            ),
             FutureBuilder(
                 future: handler.getOngoingAndFutureTrips(),
                 builder: (BuildContext ctx, AsyncSnapshot<dynamic> snapshot) {
