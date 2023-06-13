@@ -13,6 +13,19 @@ class FirebaseHandler{
   final List<Map<String, dynamic>> _itineraryList = [];
 
   final _db = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+
+  signOut() async {
+    _auth.signOut();
+  }
+
+  changePassword(String email, String oldPass, String newPass) async{
+
+
+    UserCredential credentials = await _auth.signInWithEmailAndPassword(email: email, password: oldPass);
+
+    _auth.currentUser!.updatePassword(newPass);
+  }
 
   static String getUID() {
     return FirebaseAuth.instance.currentUser!.uid;
@@ -59,6 +72,32 @@ class FirebaseHandler{
         .update(trip.toJson());
   }
 
+  void saveFName(String fName) async {
+
+    Map<String, dynamic> fNameMap = {'fName': fName};
+
+    await _db.collection("Users")
+        .doc(getUID())
+        .update(fNameMap);
+  }
+
+  void saveLName(String lName) async {
+
+    Map<String, dynamic> lNameMap = {'lName': lName};
+
+    await _db.collection("Users")
+        .doc(getUID())
+        .update(lNameMap);
+  }
+
+  void saveUserName(String userName) async {
+
+    Map<String, dynamic> uNameMap = {'userName': userName};
+
+    await _db.collection("Users")
+        .doc(getUID())
+        .update(uNameMap);
+  }
 
 
   Future<Map<String, dynamic>> getTripDetails(String tripID) async {

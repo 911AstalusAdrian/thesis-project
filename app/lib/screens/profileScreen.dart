@@ -29,26 +29,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Center(
                 child: FutureBuilder(
-                    future: handler.getUserData(), // the only way this thing works
-                    builder: (BuildContext ctx,
-                        AsyncSnapshot snapshot) {
+                    future: handler.getUserData(),
+                    builder: (BuildContext ctx, AsyncSnapshot snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('${snapshot.error} occurred'));
-                      } else if (snapshot.hasData) {
-                        Map<String, dynamic> data = snapshot.data! as Map<String, dynamic>;
                         return Center(
-                            child: Column(
-                              children: [
-                                Align(
-                                    alignment: Alignment.topCenter,
-                                    child: ProfileCard(data: data)),
-                                TextButton(
-                                    onPressed: () {},
-                                    child: const Text("Change password"))
-                              ],
-                            ));
+                            child: Text('${snapshot.error} occurred'));
+                      } else if (snapshot.hasData) {
+                        Map<String, dynamic> data =
+                            snapshot.data! as Map<String, dynamic>;
+                        return ProfileCard(
+                            data: data, onDataChanged: () => setState(() {}));
                       } else {
                         return const Center(child: CircularProgressIndicator());
                       }
@@ -56,7 +48,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Center(
               child: FutureBuilder(
                   future: handler.getOwnedTrips(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
@@ -72,13 +65,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: ListView.builder(
                               itemCount: data.length,
                               itemBuilder: (BuildContext context, int index) {
-
                                 String title = data[index]['title'];
                                 String location = data[index]['location'];
 
                                 return ListTile(
-                                    title: Text(title == "Default Trip" ? "Trip to $location" : title),
-                                    subtitle: Text(data[index]['transportation']),
+                                    title: Text(title == "Default Trip"
+                                        ? "Trip to $location"
+                                        : title),
+                                    subtitle:
+                                        Text(data[index]['transportation']),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -115,7 +110,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _shareTrip(BuildContext context) {
-
     List<Map<String, String>> usersAndAccess = [];
     TextEditingController usernameCtrl = TextEditingController();
     String selectedAccess = "";
@@ -130,56 +124,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 300,
               child: Center(
                   child: Column(
-                    children: [
-                      TextField(
-                        controller: usernameCtrl,
-                        decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                String username = usernameCtrl.text;
-                                Map<String, String> fMap = {username : selectedAccess};
-                                usersAndAccess.add(fMap);
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.add),
-                            )
-                        ),
-                      ),
-                      DropdownSearch<String>(
-                        items: const ["Viewer", "Participant"],
-                        onChanged: (value) {
-                          setState(() { selectedAccess = value ?? ""; });
-                        },
-                      ),
-                      Expanded(
-                          child: ListView.builder(
-                            itemCount: usersAndAccess.length,
-                            itemBuilder: (BuildContext ctx, int index) {
-                              return ListTile(
-                                title: Text(usersAndAccess[index]['username']!),
-                                subtitle: Text(usersAndAccess[index]['access']!),
-                              );
-                            },
-                          ))
-                    ],
-                  )
-              ),
+                children: [
+                  TextField(
+                    controller: usernameCtrl,
+                    decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                      onPressed: () {
+                        String username = usernameCtrl.text;
+                        Map<String, String> fMap = {username: selectedAccess};
+                        usersAndAccess.add(fMap);
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.add),
+                    )),
+                  ),
+                  DropdownSearch<String>(
+                    items: const ["Viewer", "Participant"],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedAccess = value ?? "";
+                      });
+                    },
+                  ),
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: usersAndAccess.length,
+                    itemBuilder: (BuildContext ctx, int index) {
+                      return ListTile(
+                        title: Text(usersAndAccess[index]['username']!),
+                        subtitle: Text(usersAndAccess[index]['access']!),
+                      );
+                    },
+                  ))
+                ],
+              )),
             ),
           );
         },
       ),
       actions: [
         TextButton(
-            onPressed: () {Navigator.of(context).pop();},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
             child: const Text("Send Invites")),
         TextButton(
-            onPressed: () {Navigator.of(context).pop();},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
             child: const Text("Cancel"))
       ],
     );
 
-    showDialog(context: context, builder: (BuildContext context) => shareDialog);
-
+    showDialog(
+        context: context, builder: (BuildContext context) => shareDialog);
   }
 
   _openEditScreen(BuildContext context, Map<String, dynamic> tripData) {
@@ -187,9 +185,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     BasicTripModel basicTrip = BasicTripModel.fromJson(tripData);
     Navigator.of(context)
-        .push(MaterialPageRoute( builder: (context) =>
-            EditTripScreen(tripID: tripID, tripModel: basicTrip)))
-        .then( (value) { setState(() {}); } );
+        .push(MaterialPageRoute(
+            builder: (context) =>
+                EditTripScreen(tripID: tripID, tripModel: basicTrip)))
+        .then((value) {
+      setState(() {});
+    });
   }
 
   _confirmTripDelete(BuildContext context, String tripID) {
