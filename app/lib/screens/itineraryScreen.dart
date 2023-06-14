@@ -1,5 +1,6 @@
 import 'package:app/model/entry_model.dart';
 import 'package:app/model/trip_model.dart';
+import 'package:app/widgets/itineraryEntry.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -68,7 +69,11 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                 itemBuilder: (BuildContext context, dynamic item){
                   List<dynamic> data = item['items'];
                   return Column(
-                    children: data.map( ((item) => Text(item['title']))).toList(),
+                    children: data.map( ((item) => ItineraryEntryWidget(
+                      tripID: widget.tripID,
+                      data: item,
+                      onRemove: () => setState(() {}))
+                    )).toList(),
                   );
                 },
               );

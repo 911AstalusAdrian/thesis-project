@@ -54,6 +54,14 @@ class FirebaseHandler{
         .add(entry.toJson());
   }
 
+  void removeEntry(String tripID, String entryID) async{
+    await _db.collection('Trips')
+        .doc(tripID)
+        .collection('Itinerary')
+        .doc(entryID)
+        .delete();
+  }
+
   void addTrip(BasicTripModel trip) async {
     TripWithOwner tripWithOwner = TripWithOwner(owner: getUID(), tripDetails: trip);
     await _db.collection("Trips")
@@ -126,6 +134,7 @@ class FirebaseHandler{
       final QuerySnapshot snapshot = await itineraryCollectionRef.get();
       snapshot.docs.forEach((DocumentSnapshot doc) {
         final itineraryEntry = doc.data()! as Map<String, dynamic>;
+        itineraryEntry['entryID'] = doc.id;
         _itineraryList.add(itineraryEntry);
       });
       return _itineraryList;
