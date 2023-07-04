@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../model/trip_model.dart';
 import '../firebaseHandler.dart';
 import '../widgets/profileCard.dart';
@@ -13,12 +15,18 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin{
   FirebaseHandler handler = FirebaseHandler();
+
+  late TabController _tc;
+  int _currentIndex = 0;
+  late Future<Map<String, dynamic>> _userData;
 
   @override
   void initState() {
     super.initState();
+    _tc = TabController(length: 2, vsync: this);
+    _userData = handler.getUserData();
   }
 
   @override
@@ -29,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Center(
                 child: FutureBuilder(
-                    future: handler.getUserData(),
+                    future: _userData,
                     builder: (BuildContext ctx, AsyncSnapshot snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -45,64 +53,192 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return const Center(child: CircularProgressIndicator());
                       }
                     })),
-            Center(
-              child: FutureBuilder(
-                  future: handler.getOwnedTrips(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('${snapshot.error} occured'));
-                    } else if (snapshot.hasData) {
-                      List<Map<String, dynamic>> data = snapshot.data!;
-                      if (data.isEmpty) {
-                        return const Center(
-                            child: Text("You have no trips planned yet!"));
-                      } else {
-                        return SizedBox(
-                          height: 450,
-                          child: ListView.builder(
-                              itemCount: data.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                String title = data[index]['title'];
-                                String location = data[index]['location'];
-
-                                return ListTile(
-                                    title: Text(title == "Default Trip"
-                                        ? "Trip to $location"
-                                        : title),
-                                    subtitle:
-                                        Text(data[index]['transportation']),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () => _shareTrip(context),
-                                          icon: const Icon(Icons.share),
-                                        ),
-                                        IconButton(
-                                          onPressed: () => _openEditScreen(
-                                              context, data[index]),
-                                          icon: const Icon(Icons.edit_sharp),
-                                        ),
-                                        IconButton(
-                                          onPressed: () => _confirmTripDelete(
-                                              context, data[index]['tripID']),
-                                          icon: const Icon(
-                                              Icons.delete_outline_sharp,
-                                              color: Colors.red),
-                                        ),
-                                      ],
-                                    ));
-                              }),
-                        );
-                      }
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  }),
+            TabBar(
+              tabs: const [Tab(text: "My Trips"), Tab(text: " Invited Trips")],
+              controller: _tc,
+              onTap: (index) {
+                setState(() {_currentIndex = index;});
+              },
             ),
+            SizedBox(
+              height: 400,
+              child: IndexedStack(
+                index: _currentIndex,
+                children: [
+                  FutureBuilder(
+                      future: handler.getOwnedTrips(),
+                      builder:
+                          (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('${snapshot.error} occured'));
+                        } else if (snapshot.hasData) {
+                          List<Map<String, dynamic>> data = snapshot.data!;
+                          if (data.isEmpty) {
+                            return const Center(
+                                child: Text("You have no trips planned yet!"));
+                          } else {
+                            return SizedBox(
+                              height: 450,
+                              child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    String title = data[index]['title'];
+                                    String location = data[index]['location'];
+
+                                    return ListTile(
+                                        title: Text(title == "Default Trip"
+                                            ? "Trip to $location"
+                                            : title),
+                                        subtitle:
+                                        Text(data[index]['transportation']),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () => _shareTrip(context),
+                                              icon: const Icon(Icons.share),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => _openEditScreen(
+                                                  context, data[index]),
+                                              icon: const Icon(Icons.edit_sharp),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => _confirmTripDelete(
+                                                  context, data[index]['tripID']),
+                                              icon: const Icon(
+                                                  Icons.delete_outline_sharp,
+                                                  color: Colors.red),
+                                            ),
+                                          ],
+                                        ));
+                                  }),
+                            );
+                          }
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      }),
+                  const Text("Hello")
+                  // FutureBuilder(
+                  //     future: handler.getOwnedTrips(),
+                  //     builder:
+                  //         (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  //       if (snapshot.connectionState == ConnectionState.waiting) {
+                  //         return const Center(child: CircularProgressIndicator());
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(child: Text('${snapshot.error} occured'));
+                  //       } else if (snapshot.hasData) {
+                  //         List<Map<String, dynamic>> data = snapshot.data!;
+                  //         if (data.isEmpty) {
+                  //           return const Center(
+                  //               child: Text("You have no trips planned yet!"));
+                  //         } else {
+                  //           return SizedBox(
+                  //             height: 450,
+                  //             child: ListView.builder(
+                  //                 itemCount: data.length,
+                  //                 itemBuilder: (BuildContext context, int index) {
+                  //                   String title = data[index]['title'];
+                  //                   String location = data[index]['location'];
+                  //
+                  //                   return ListTile(
+                  //                       title: Text(title == "Default Trip"
+                  //                           ? "Trip to $location"
+                  //                           : title),
+                  //                       subtitle:
+                  //                       Text(data[index]['transportation']),
+                  //                       trailing: Row(
+                  //                         mainAxisSize: MainAxisSize.min,
+                  //                         children: [
+                  //                           IconButton(
+                  //                             onPressed: () => _shareTrip(context),
+                  //                             icon: const Icon(Icons.share),
+                  //                           ),
+                  //                           IconButton(
+                  //                             onPressed: () => _openEditScreen(
+                  //                                 context, data[index]),
+                  //                             icon: const Icon(Icons.edit_sharp),
+                  //                           ),
+                  //                           IconButton(
+                  //                             onPressed: () => _confirmTripDelete(
+                  //                                 context, data[index]['tripID']),
+                  //                             icon: const Icon(
+                  //                                 Icons.delete_outline_sharp,
+                  //                                 color: Colors.red),
+                  //                           ),
+                  //                         ],
+                  //                       ));
+                  //                 }),
+                  //           );
+                  //         }
+                  //       } else {
+                  //         return const Center(child: CircularProgressIndicator());
+                  //       }
+                  //     }),
+                ],
+              ),
+            ),
+            // Center(
+            //   child: FutureBuilder(
+            //       future: handler.getOwnedTrips(),
+            //       builder:
+            //           (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            //         if (snapshot.connectionState == ConnectionState.waiting) {
+            //           return const Center(child: CircularProgressIndicator());
+            //         } else if (snapshot.hasError) {
+            //           return Center(child: Text('${snapshot.error} occured'));
+            //         } else if (snapshot.hasData) {
+            //           List<Map<String, dynamic>> data = snapshot.data!;
+            //           if (data.isEmpty) {
+            //             return const Center(
+            //                 child: Text("You have no trips planned yet!"));
+            //           } else {
+            //             return SizedBox(
+            //               height: 450,
+            //               child: ListView.builder(
+            //                   itemCount: data.length,
+            //                   itemBuilder: (BuildContext context, int index) {
+            //                     String title = data[index]['title'];
+            //                     String location = data[index]['location'];
+            //
+            //                     return ListTile(
+            //                         title: Text(title == "Default Trip"
+            //                             ? "Trip to $location"
+            //                             : title),
+            //                         subtitle:
+            //                             Text(data[index]['transportation']),
+            //                         trailing: Row(
+            //                           mainAxisSize: MainAxisSize.min,
+            //                           children: [
+            //                             IconButton(
+            //                               onPressed: () => _shareTrip(context),
+            //                               icon: const Icon(Icons.share),
+            //                             ),
+            //                             IconButton(
+            //                               onPressed: () => _openEditScreen(
+            //                                   context, data[index]),
+            //                               icon: const Icon(Icons.edit_sharp),
+            //                             ),
+            //                             IconButton(
+            //                               onPressed: () => _confirmTripDelete(
+            //                                   context, data[index]['tripID']),
+            //                               icon: const Icon(
+            //                                   Icons.delete_outline_sharp,
+            //                                   color: Colors.red),
+            //                             ),
+            //                           ],
+            //                         ));
+            //                   }),
+            //             );
+            //           }
+            //         } else {
+            //           return const Center(child: CircularProgressIndicator());
+            //         }
+            //       }),
+            // ),
           ],
         ),
       ),
@@ -121,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return SingleChildScrollView(
             child: SizedBox(
               width: double.maxFinite,
-              height: 300,
+              height: 200,
               child: Center(
                   child: Column(
                 children: [
@@ -137,14 +273,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                       icon: const Icon(Icons.add),
                     )),
-                  ),
-                  DropdownSearch<String>(
-                    items: const ["Viewer", "Participant"],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedAccess = value ?? "";
-                      });
-                    },
                   ),
                   Expanded(
                       child: ListView.builder(
@@ -165,6 +293,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       actions: [
         TextButton(
             onPressed: () {
+              String user  = usernameCtrl.text;
+              _sendNotification(user);
               Navigator.of(context).pop();
             },
             child: const Text("Send Invites")),
@@ -218,5 +348,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return alert;
       },
     );
+  }
+
+  _sendNotification(String user) async{
+
+    String token = await handler.getUserToken(user);
+    String username = await handler.getUsername();
+
+    try{
+      await http.post(
+        Uri.parse("https://fcm.googleapis.com/fcm/send"),
+        headers: <String, String> {
+          'Content-Type' : 'application/json',
+          'Authorization' : 'key=AAAARp55MdM:APA91bH5PgWezRMhP3XvqhfSPSQaK5bchTxTshmqct3SHOXBnRz1v-P_ExPN-y_alXtdVKtldtQoN4v3MycXea-OsR_vyhRnaIa9vdVON5lR53osfENiHA8kMSFPqPzQfJmahsj6Z_4C'
+        },
+        body: jsonEncode(
+          <String, dynamic> {
+            'priority' : 'high',
+            'data': <String, dynamic> {
+              'click_action' : 'FLUTTER_NOTIFCATION_CLICK',
+              'status' : 'done',
+              'body' : "Check it out!",
+              'title' : "You have been invited to a Trip!"
+            },
+
+            'notification' : <String, dynamic> {
+              'title' : "$username has invited you to a Trip!",
+              'body' : "Check it out!",
+              'android_channel_id' : "dbfood"
+            },
+
+            'to' : token
+          }
+        )
+      );
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

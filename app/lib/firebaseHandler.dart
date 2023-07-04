@@ -3,6 +3,7 @@ import 'package:app/model/entry_model.dart';
 import 'package:app/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'model/trip_model.dart';
 
@@ -14,6 +15,14 @@ class FirebaseHandler{
 
   final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  final _messaging = FirebaseMessaging.instance;
+
+
+
+
+
+
+  /// ---------- FirebaseAuth ----------
 
   signOut() async {
     _auth.signOut();
@@ -30,6 +39,33 @@ class FirebaseHandler{
   static String getUID() {
     return FirebaseAuth.instance.currentUser!.uid;
   }
+
+  /// ---------- Firestore ----------
+
+  void saveToken(String token) async{
+    await _db.collection("Users").doc(getUID()).set({'token' : token}, SetOptions(merge: true));
+  }
+
+  Future<String> getUserToken(String user) async {
+    final usersCollectionRef = _db.collection("Users");
+
+    try {
+      final QuerySnapshot snapshot = await usersCollectionRef.where('userName', isEqualTo: user).get();
+      DocumentSnapshot doc = snapshot.docs.first;
+      final data = doc.data()! as Map<String, dynamic>;
+      return data['token'];
+    } catch (e) {
+      print("Error getting userToken!");
+      return "";
+    }
+  }
+
+  Future<String> getUsername() async {
+  DocumentSnapshot snapshot = await  _db.collection("Users")
+      .doc(getUID()).get();
+  Map<String, dynamic> data =  snapshot.data() as Map<String, dynamic>;
+  return data['userName'];
+}
 
   Future<String> getName() async {
     DocumentSnapshot snapshot = await  _db.collection("Users")
@@ -106,7 +142,6 @@ class FirebaseHandler{
         .doc(getUID())
         .update(uNameMap);
   }
-
 
   Future<Map<String, dynamic>> getTripDetails(String tripID) async {
     final tripsDocumentRef = _db.collection("Trips").doc(tripID);
@@ -191,7 +226,6 @@ class FirebaseHandler{
     }
     
   }
-
 
   Future<List<Map<String, dynamic>>> getOwnedTrips() async {
     _tripsList.clear();

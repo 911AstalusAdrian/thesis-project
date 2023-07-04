@@ -27,10 +27,14 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
 
   late StreamSubscription<User?> user;
+  MessagesHandler handler = MessagesHandler();
 
   @override
   void initState() {
     super.initState();
+
+
+
     user = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         print('User is currently signed out!');
@@ -46,12 +50,10 @@ class _MainState extends State<Main> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
 
-    MessagesHandler.setupMessaging();
+    handler.setupMessaging();
 
     return MaterialApp(
 
@@ -73,4 +75,7 @@ class _MainState extends State<Main> {
       debugShowCheckedModeBanner: false,
     );
   }
+
+
+
 }
