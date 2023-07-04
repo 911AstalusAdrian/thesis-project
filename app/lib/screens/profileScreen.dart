@@ -15,7 +15,8 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin{
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
   FirebaseHandler handler = FirebaseHandler();
 
   late TabController _tc;
@@ -57,7 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               tabs: const [Tab(text: "My Trips"), Tab(text: " Invited Trips")],
               controller: _tc,
               onTap: (index) {
-                setState(() {_currentIndex = index;});
+                setState(() {
+                  _currentIndex = index;
+                });
               },
             ),
             SizedBox(
@@ -67,6 +70,72 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 children: [
                   FutureBuilder(
                       future: handler.getOwnedTrips(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('${snapshot.error} occured'));
+                        } else if (snapshot.hasData) {
+                          List<Map<String, dynamic>> data = snapshot.data!;
+                          if (data.isEmpty) {
+                            return const Center(
+                                child: Text("You have no trips planned yet!"));
+                          } else {
+                            return SizedBox(
+                              height: 450,
+                              child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    String title = data[index]['title'];
+                                    String location = data[index]['location'];
+                                    String tripId = data[index]['tripID'];
+
+                                    return ListTile(
+                                        title: Text(title == "Default Trip"
+                                            ? "Trip to $location"
+                                            : title),
+                                        subtitle:
+                                            Text(data[index]['transportation']),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _shareTrip(context, tripId),
+                                              icon: const Icon(Icons.share),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => _openEditScreen(
+                                                  context, data[index]),
+                                              icon:
+                                                  const Icon(Icons.edit_sharp),
+                                            ),
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _confirmTripDelete(context,
+                                                      data[index]['tripID']),
+                                              icon: const Icon(
+                                                  Icons.delete_outline_sharp,
+                                                  color: Colors.red),
+                                            ),
+                                          ],
+                                        ));
+                                  }),
+                            );
+                          }
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      }),
+                  // const Text("Hello")
+                  FutureBuilder(
+                      future: handler.getInvitedTrips(),
                       builder:
                           (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           List<Map<String, dynamic>> data = snapshot.data!;
                           if (data.isEmpty) {
                             return const Center(
-                                child: Text("You have no trips planned yet!"));
+                                child: Text("You are not invited to any Trips :("));
                           } else {
                             return SizedBox(
                               height: 450,
@@ -97,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             IconButton(
-                                              onPressed: () => _shareTrip(context),
+                                              onPressed: () => {},
                                               icon: const Icon(Icons.share),
                                             ),
                                             IconButton(
@@ -121,63 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           return const Center(child: CircularProgressIndicator());
                         }
                       }),
-                  const Text("Hello")
-                  // FutureBuilder(
-                  //     future: handler.getOwnedTrips(),
-                  //     builder:
-                  //         (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  //       if (snapshot.connectionState == ConnectionState.waiting) {
-                  //         return const Center(child: CircularProgressIndicator());
-                  //       } else if (snapshot.hasError) {
-                  //         return Center(child: Text('${snapshot.error} occured'));
-                  //       } else if (snapshot.hasData) {
-                  //         List<Map<String, dynamic>> data = snapshot.data!;
-                  //         if (data.isEmpty) {
-                  //           return const Center(
-                  //               child: Text("You have no trips planned yet!"));
-                  //         } else {
-                  //           return SizedBox(
-                  //             height: 450,
-                  //             child: ListView.builder(
-                  //                 itemCount: data.length,
-                  //                 itemBuilder: (BuildContext context, int index) {
-                  //                   String title = data[index]['title'];
-                  //                   String location = data[index]['location'];
-                  //
-                  //                   return ListTile(
-                  //                       title: Text(title == "Default Trip"
-                  //                           ? "Trip to $location"
-                  //                           : title),
-                  //                       subtitle:
-                  //                       Text(data[index]['transportation']),
-                  //                       trailing: Row(
-                  //                         mainAxisSize: MainAxisSize.min,
-                  //                         children: [
-                  //                           IconButton(
-                  //                             onPressed: () => _shareTrip(context),
-                  //                             icon: const Icon(Icons.share),
-                  //                           ),
-                  //                           IconButton(
-                  //                             onPressed: () => _openEditScreen(
-                  //                                 context, data[index]),
-                  //                             icon: const Icon(Icons.edit_sharp),
-                  //                           ),
-                  //                           IconButton(
-                  //                             onPressed: () => _confirmTripDelete(
-                  //                                 context, data[index]['tripID']),
-                  //                             icon: const Icon(
-                  //                                 Icons.delete_outline_sharp,
-                  //                                 color: Colors.red),
-                  //                           ),
-                  //                         ],
-                  //                       ));
-                  //                 }),
-                  //           );
-                  //         }
-                  //       } else {
-                  //         return const Center(child: CircularProgressIndicator());
-                  //       }
-                  //     }),
                 ],
               ),
             ),
@@ -245,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  _shareTrip(BuildContext context) {
+  _shareTrip(BuildContext context, String tripID) {
     List<Map<String, String>> usersAndAccess = [];
     TextEditingController usernameCtrl = TextEditingController();
     String selectedAccess = "";
@@ -293,7 +305,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       actions: [
         TextButton(
             onPressed: () {
-              String user  = usernameCtrl.text;
+              String user = usernameCtrl.text;
+              handler.inviteUser(user, tripID);
               _sendNotification(user);
               Navigator.of(context).pop();
             },
@@ -309,6 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     showDialog(
         context: context, builder: (BuildContext context) => shareDialog);
   }
+
 
   _openEditScreen(BuildContext context, Map<String, dynamic> tripData) {
     String tripID = tripData['tripID'];
@@ -350,38 +364,32 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  _sendNotification(String user) async{
-
+  _sendNotification(String user) async {
     String token = await handler.getUserToken(user);
     String username = await handler.getUsername();
 
-    try{
-      await http.post(
-        Uri.parse("https://fcm.googleapis.com/fcm/send"),
-        headers: <String, String> {
-          'Content-Type' : 'application/json',
-          'Authorization' : 'key=AAAARp55MdM:APA91bH5PgWezRMhP3XvqhfSPSQaK5bchTxTshmqct3SHOXBnRz1v-P_ExPN-y_alXtdVKtldtQoN4v3MycXea-OsR_vyhRnaIa9vdVON5lR53osfENiHA8kMSFPqPzQfJmahsj6Z_4C'
-        },
-        body: jsonEncode(
-          <String, dynamic> {
-            'priority' : 'high',
-            'data': <String, dynamic> {
-              'click_action' : 'FLUTTER_NOTIFCATION_CLICK',
-              'status' : 'done',
-              'body' : "Check it out!",
-              'title' : "You have been invited to a Trip!"
+    try {
+      await http.post(Uri.parse("https://fcm.googleapis.com/fcm/send"),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization':
+                'key=AAAARp55MdM:APA91bH5PgWezRMhP3XvqhfSPSQaK5bchTxTshmqct3SHOXBnRz1v-P_ExPN-y_alXtdVKtldtQoN4v3MycXea-OsR_vyhRnaIa9vdVON5lR53osfENiHA8kMSFPqPzQfJmahsj6Z_4C'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFCATION_CLICK',
+              'status': 'done',
+              'body': "Check it out!",
+              'title': "You have been invited to a Trip!"
             },
-
-            'notification' : <String, dynamic> {
-              'title' : "$username has invited you to a Trip!",
-              'body' : "Check it out!",
-              'android_channel_id' : "dbfood"
+            'notification': <String, dynamic>{
+              'title': "$username has invited you to a Trip!",
+              'body': "Check it out!",
+              'android_channel_id': "dbfood"
             },
-
-            'to' : token
-          }
-        )
-      );
+            'to': token
+          }));
     } catch (e) {
       print(e.toString());
     }

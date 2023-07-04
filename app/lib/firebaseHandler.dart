@@ -9,17 +9,13 @@ import 'model/trip_model.dart';
 
 class FirebaseHandler{
 
+  final List<Map<String, dynamic>> _invitedTrips = [];
   final List<Map<String, dynamic>> _tripsList = [];
   final List<Map<String, dynamic>> _ongoingAndFutureTripsList = [];
   final List<Map<String, dynamic>> _itineraryList = [];
 
   final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-  final _messaging = FirebaseMessaging.instance;
-
-
-
-
 
 
   /// ---------- FirebaseAuth ----------
@@ -41,6 +37,19 @@ class FirebaseHandler{
   }
 
   /// ---------- Firestore ----------
+
+  void inviteUser(String userName, String tripID) async{
+    final usersCollectionRef = _db.collection("Users");
+
+    try{
+      final QuerySnapshot snapshot = await usersCollectionRef.where('userName', isEqualTo: userName).limit(1).get();
+      DocumentReference ref = snapshot.docs.first.reference;
+      ref.set({'invitedTrips' : FieldValue.arrayUnion([tripID])}, SetOptions(merge: true));
+      
+    } catch (e) {
+      print("error inviting user!");
+    }
+  }
 
   void saveToken(String token) async{
     await _db.collection("Users").doc(getUID()).set({'token' : token}, SetOptions(merge: true));
@@ -182,6 +191,7 @@ class FirebaseHandler{
   Future<List<Map<String, dynamic>>> getOngoingAndFutureTrips() async{
     _ongoingAndFutureTripsList.clear();
 
+    String owner = getUID();
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day, 0, 0 ,0);
     Timestamp todayTimestamp = Timestamp.fromDate(today);
@@ -194,10 +204,12 @@ class FirebaseHandler{
           .get();
       snapshot.docs.forEach((DocumentSnapshot doc) {
         final tripData = doc.data()! as Map<String, dynamic>;
+
         tripData['ongoing'] = true;
         tripData['tripID'] = doc.id;
         Timestamp endDate = tripData['endDate'] as Timestamp;
-        if (todayTimestamp.compareTo(endDate) < 0) {
+
+        if (todayTimestamp.compareTo(endDate) < 0 && tripData['owner'] == owner) {
           _ongoingAndFutureTripsList.add(tripData);
         }
       });
@@ -217,7 +229,7 @@ class FirebaseHandler{
         final tripData = doc.data()! as Map<String, dynamic>;
         tripData['ongoing'] = false;
         tripData['tripID'] = doc.id;
-        _ongoingAndFutureTripsList.add(tripData);
+        if (tripData['owner'] == owner) {_ongoingAndFutureTripsList.add(tripData);}
       });
       return _ongoingAndFutureTripsList;
     } catch (error) {
@@ -242,6 +254,48 @@ class FirebaseHandler{
       return _tripsList;
     } catch (error) {
       print("Error getting Owned Trips");
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getInvitedTrips() async {
+    _invitedTrips.clear();
+
+    final tripsCollectionRef = _db.collection("Trips");
+
+    List<String> invited = await getInvitedTripsList();
+
+    for (String trip in invited) {
+      try{
+        final DocumentSnapshot snapshot = await tripsCollectionRef.doc(trip).get();
+        final tripData = snapshot.data()! as Map<String, dynamic>;
+        _invitedTrips.add(tripData);
+
+      } catch (e) {
+        print("Error getting invited trips data");
+        break;
+      }
+    }
+
+    return _invitedTrips;
+  }
+
+  Future<List<String>> getInvitedTripsList() async {
+
+    List<String> invited = [];
+
+    final usersCollectionRef = _db.collection("Users");
+    try {
+      final DocumentSnapshot snapshot = await usersCollectionRef.doc(getUID()).get();
+      final userData = snapshot.data()! as Map<String, dynamic>;
+      final trips = userData['invitedTrips'];
+      for (String trip in trips){
+        invited.add(trip);
+      }
+
+      return invited;
+    } catch (e) {
+      print ("Error getting tripList");
       return [];
     }
   }

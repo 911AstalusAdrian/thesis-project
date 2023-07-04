@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseHandler handler = FirebaseHandler();
 
   final String uid = FirebaseHandler.getUID();
+  List<Map<String, dynamic>> _tripData = [];
 
   @override
   initState() {
@@ -45,26 +46,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('${snapshot.error} has occurred'));
                   } else if (snapshot.hasData) {
-                    List<Map<String, dynamic>> data = snapshot.data!;
-                    if (data.isEmpty) {
+                    _tripData.clear();
+                    _tripData = snapshot.data!;
+                    // List<Map<String, dynamic>> data = snapshot.data!;
+                    if (_tripData.isEmpty) {
                       return const Center(
                           child: Text("You have to Trips planned yet!"));
                     } else {
                       return SizedBox(
                         height: 600,
                         child: ListView.builder(
-                            itemCount: data.length,
+                            itemCount: _tripData.length,
                             itemBuilder: (BuildContext ctx, int index) {
 
                               DateTime currentDate = DateTime.now();
                               currentDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
-                              DateTime startDate = data[index]['startDate'].toDate();
+                              DateTime startDate = _tripData[index]['startDate'].toDate();
                               int noOfDays = startDate.difference(currentDate).inDays;
-                              bool ongoing = data[index]['ongoing'];
+                              bool ongoing = _tripData[index]['ongoing'];
 
                               return ListTile(
                                 leading: const Icon(Icons.flight_takeoff),
-                                title: Text(data[index]['title']),
+                                title: Text(_tripData[index]['title']),
                                 subtitle: ongoing == true
                                     ? const Text("ONGOING")
                                     : noOfDays == 0
@@ -72,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         : Text("$noOfDays day(s) left"),
                                 trailing: TextButton(
                                   onPressed: () {
-                                    String tripID = data[index]['tripID'];
-                                    BasicTripModel trip = BasicTripModel.fromJson(data[index]);
+                                    String tripID = _tripData[index]['tripID'];
+                                    BasicTripModel trip = BasicTripModel.fromJson(_tripData[index]);
                                     Navigator.push(context, MaterialPageRoute(
                                         builder: (context) => ItineraryScreen(tripID: tripID, trip: trip)));
                                   },
