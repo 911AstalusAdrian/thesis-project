@@ -7,6 +7,7 @@ import '../model/trip_model.dart';
 import '../firebaseHandler.dart';
 import '../widgets/profileCard.dart';
 import 'editTripScreen.dart';
+import 'itineraryScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -162,27 +163,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             : title),
                                         subtitle:
                                         Text(data[index]['transportation']),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () => {},
-                                              icon: const Icon(Icons.share),
-                                            ),
-                                            IconButton(
-                                              onPressed: () => _openEditScreen(
-                                                  context, data[index]),
-                                              icon: const Icon(Icons.edit_sharp),
-                                            ),
-                                            IconButton(
-                                              onPressed: () => _confirmTripDelete(
-                                                  context, data[index]['tripID']),
-                                              icon: const Icon(
-                                                  Icons.delete_outline_sharp,
-                                                  color: Colors.red),
-                                            ),
-                                          ],
-                                        ));
+                                        trailing: IconButton(
+                                          onPressed: () {
+                                          String tripID = data[index]['tripID'];
+                                            BasicTripModel trip = BasicTripModel.fromJson(data[index]);
+                                          Navigator.push(context, MaterialPageRoute(
+                                              builder: (context) => ItineraryScreen(tripID: tripID, trip: trip)));
+                                            },
+                                          icon: const Icon(Icons.remove_red_eye_outlined),
+                                        ),);
                                   }),
                             );
                           }
@@ -193,64 +182,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ],
               ),
             ),
-            // Center(
-            //   child: FutureBuilder(
-            //       future: handler.getOwnedTrips(),
-            //       builder:
-            //           (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            //         if (snapshot.connectionState == ConnectionState.waiting) {
-            //           return const Center(child: CircularProgressIndicator());
-            //         } else if (snapshot.hasError) {
-            //           return Center(child: Text('${snapshot.error} occured'));
-            //         } else if (snapshot.hasData) {
-            //           List<Map<String, dynamic>> data = snapshot.data!;
-            //           if (data.isEmpty) {
-            //             return const Center(
-            //                 child: Text("You have no trips planned yet!"));
-            //           } else {
-            //             return SizedBox(
-            //               height: 450,
-            //               child: ListView.builder(
-            //                   itemCount: data.length,
-            //                   itemBuilder: (BuildContext context, int index) {
-            //                     String title = data[index]['title'];
-            //                     String location = data[index]['location'];
-            //
-            //                     return ListTile(
-            //                         title: Text(title == "Default Trip"
-            //                             ? "Trip to $location"
-            //                             : title),
-            //                         subtitle:
-            //                             Text(data[index]['transportation']),
-            //                         trailing: Row(
-            //                           mainAxisSize: MainAxisSize.min,
-            //                           children: [
-            //                             IconButton(
-            //                               onPressed: () => _shareTrip(context),
-            //                               icon: const Icon(Icons.share),
-            //                             ),
-            //                             IconButton(
-            //                               onPressed: () => _openEditScreen(
-            //                                   context, data[index]),
-            //                               icon: const Icon(Icons.edit_sharp),
-            //                             ),
-            //                             IconButton(
-            //                               onPressed: () => _confirmTripDelete(
-            //                                   context, data[index]['tripID']),
-            //                               icon: const Icon(
-            //                                   Icons.delete_outline_sharp,
-            //                                   color: Colors.red),
-            //                             ),
-            //                           ],
-            //                         ));
-            //                   }),
-            //             );
-            //           }
-            //         } else {
-            //           return const Center(child: CircularProgressIndicator());
-            //         }
-            //       }),
-            // ),
           ],
         ),
       ),
@@ -275,31 +206,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 children: [
                   TextField(
                     controller: usernameCtrl,
-                    decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                      onPressed: () {
-                        String username = usernameCtrl.text;
-                        Map<String, String> fMap = {username: selectedAccess};
-                        usersAndAccess.add(fMap);
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.add),
-                    )),
-                  ),
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: usersAndAccess.length,
-                    itemBuilder: (BuildContext ctx, int index) {
-                      return ListTile(
-                        title: Text(usersAndAccess[index]['username']!),
-                        subtitle: Text(usersAndAccess[index]['access']!),
-                      );
-                    },
-                  ))
-                ],
+                    ),]
+                  )
               )),
-            ),
-          );
+            );
         },
       ),
       actions: [
@@ -310,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               _sendNotification(user);
               Navigator.of(context).pop();
             },
-            child: const Text("Send Invites")),
+            child: const Text("Send Invite")),
         TextButton(
             onPressed: () {
               Navigator.of(context).pop();

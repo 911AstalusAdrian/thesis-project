@@ -46,11 +46,12 @@ dependencies:
   get: ^4.6.5
   google_maps_flutter: ^2.3.0
   intl: ^0.18.1
-  flutter_google_places: ^0.3.0
   grouped_list: ^5.1.2
   firebase_messaging: ^14.6.2
   http: ^0.13.5
   flutter_local_notifications: ^15.0.0
+  google_places_flutter: ^2.0.5
+  uuid: ^3.0.7
 
 
 dev_dependencies:
