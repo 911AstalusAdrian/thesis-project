@@ -269,6 +269,7 @@ class FirebaseHandler{
       try{
         final DocumentSnapshot snapshot = await tripsCollectionRef.doc(trip).get();
         final tripData = snapshot.data()! as Map<String, dynamic>;
+        tripData['tripID'] = snapshot.id;
         _invitedTrips.add(tripData);
 
       } catch (e) {
